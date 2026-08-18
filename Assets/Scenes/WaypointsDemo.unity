@@ -281,7 +281,7 @@ Transform:
   m_GameObject: {fileID: 522554041}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5, y: 3, z: 0}
+  m_LocalPosition: {x: -5, y: 5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -570,7 +570,7 @@ Transform:
   m_GameObject: {fileID: 902862770}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
   m_LocalScale: {x: 40, y: 30, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -686,12 +686,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7968ce6b55b881d46a29c4f18bf1bc0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Spawner
-  enemyPrefab: {fileID: 3689108954385262874, guid: b65d1b057cfa05947bfab0bb38b77099, type: 3}
+  enemyPrefab: {fileID: 5052405523583763798, guid: b65d1b057cfa05947bfab0bb38b77099, type: 3}
   waypoints:
   - {fileID: 522554042}
   - {fileID: 1782496832}
   - {fileID: 1460050854}
   spawnInterval: 2
+  defaultCapacity: 10
+  maxSize: 20
 --- !u!1 &1782496831
 GameObject:
   m_ObjectHideFlags: 0
@@ -717,7 +719,7 @@ Transform:
   m_GameObject: {fileID: 1782496831}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1, y: -3, z: 0}
+  m_LocalPosition: {x: -5, y: -2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

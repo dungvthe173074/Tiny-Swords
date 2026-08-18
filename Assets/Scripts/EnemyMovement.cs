@@ -1,14 +1,26 @@
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class EnemyMovement : MonoBehaviour
 {
     public float moveSpeed = 3f;
     private Transform[] waypoints;
     private int waveIndex = 0;
+    private IObjectPool<EnemyMovement> objectPool;
+
+    public void SetPool(IObjectPool<EnemyMovement> pool)
+    {
+        objectPool = pool;
+    }
 
     public void SetWaypoints(Transform[] newWaypoints)
     {
         waypoints = newWaypoints;
+    }
+
+    private void OnEnable()
+    {
+        waveIndex = 0;
     }
 
     void Update()
@@ -23,7 +35,14 @@ public class EnemyMovement : MonoBehaviour
         {
             if (waveIndex >= waypoints.Length - 1)
             {
-                Destroy(gameObject);
+                if (objectPool != null)
+                {
+                    objectPool.Release(this);
+                }
+                else
+                {
+                    Destroy(gameObject); // Fallback
+                }
                 return;
             }
             waveIndex++;
