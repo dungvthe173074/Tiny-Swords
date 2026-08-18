@@ -7,8 +7,8 @@ public class Spawner : MonoBehaviour
     public EnemyMovement enemyPrefab;
     public Transform[] waypoints;
     public float spawnInterval = 2f;
-    public int defaultCapacity = 10;
-    public int maxSize = 20;
+    public int defaultCapacity = 50;
+    public int maxSize = 50;
 
     private IObjectPool<EnemyMovement> enemyPool;
 
