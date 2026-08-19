@@ -24,11 +24,7 @@ public class EnemyMovement : MonoBehaviour
 
     void Update()
     {
-        if (waypoints == null || waypoints.Length == 0)
-        {
-            Debug.LogWarning($"[{gameObject.name}] Waypoints array is null or empty!");
-            return;
-        }
+        if (waypoints == null || waypoints.Length == 0) return;
 
         Transform target = waypoints[waveIndex];
         Vector3 dir = target.position - transform.position;
