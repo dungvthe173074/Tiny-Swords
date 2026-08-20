@@ -89,20 +89,20 @@ public class GridManager : MonoBehaviour
 
     private bool IsPositionOnBridge(Vector3 pos)
     {
-        // Bottom horizontal bridge: y ≈ 3.5, x from -16.5 to -9.0
-        if (Mathf.Abs(pos.y - 3.5f) < 0.70f && pos.x <= -8.8f) return true;
+        //// Bottom horizontal bridge: y ≈ 3.5, x from -16.5 to -9.0
+        //if (Mathf.Abs(pos.y - 3.5f) < 0.70f && pos.x <= -8.8f) return true;
 
-        // Vertical bridge 1: x ≈ -9.5, y from 3.0 to 7.0
-        if (Mathf.Abs(pos.x - (-9.5f)) < 0.70f && pos.y >= 3.0f && pos.y <= 7.0f) return true;
+        //// Vertical bridge 1: x ≈ -9.5, y from 3.0 to 7.0
+        //if (Mathf.Abs(pos.x - (-9.5f)) < 0.70f && pos.y >= 3.0f && pos.y <= 7.0f) return true;
 
-        // Middle horizontal bridge: y ≈ 6.5, x from -10.0 to -5.0
-        if (Mathf.Abs(pos.y - 6.5f) < 0.70f && pos.x >= -10.0f && pos.x <= -5.0f) return true;
+        //// Middle horizontal bridge: y ≈ 6.5, x from -10.0 to -5.0
+        //if (Mathf.Abs(pos.y - 6.5f) < 0.70f && pos.x >= -10.0f && pos.x <= -5.0f) return true;
 
-        // Vertical bridge 2: x ≈ -5.5, y from 6.0 to 10.0
-        if (Mathf.Abs(pos.x - (-5.5f)) < 0.70f && pos.y >= 6.0f && pos.y <= 10.0f) return true;
+        //// Vertical bridge 2: x ≈ -5.5, y from 6.0 to 10.0
+        //if (Mathf.Abs(pos.x - (-5.5f)) < 0.70f && pos.y >= 6.0f && pos.y <= 10.0f) return true;
 
-        // Top horizontal bridge: y ≈ 9.5, x from -6.0 to 1.5
-        if (Mathf.Abs(pos.y - 9.5f) < 0.70f && pos.x >= -6.0f) return true;
+        //// Top horizontal bridge: y ≈ 9.5, x from -6.0 to 1.5
+        //if (Mathf.Abs(pos.y - 9.5f) < 0.70f && pos.x >= -6.0f) return true;
 
         return false;
     }
