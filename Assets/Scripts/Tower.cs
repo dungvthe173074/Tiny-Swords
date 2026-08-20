@@ -26,7 +26,11 @@ public class Tower : MonoBehaviour
 
     private void UpdateTarget()
     {
-        Enemy[] enemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None);
+#if UNITY_2023_1_OR_NEWER
+        Enemy[] enemies = FindObjectsByType<Enemy>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+#else
+        Enemy[] enemies = FindObjectsOfType<Enemy>();
+#endif
         float shortestDistance = Mathf.Infinity;
         Enemy nearestEnemy = null;
 

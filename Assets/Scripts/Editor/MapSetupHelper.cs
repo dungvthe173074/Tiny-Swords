@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
 
 [InitializeOnLoad]
 public static class MapSetupHelper
@@ -61,7 +62,7 @@ public static class MapSetupHelper
         }
 
         // 2. Clean up any loose test GameObjects in the scene root
-        string[] looseNames = new string[] { "Tower_0", "Arrow", "Poison", "Fire" };
+        string[] looseNames = new string[] { "Tower_0", "Arrow", "Poison", "Fire", "Grid" };
         foreach (string ln in looseNames)
         {
             GameObject loose = GameObject.Find(ln);
@@ -235,20 +236,31 @@ public static class MapSetupHelper
 
         EditorUtility.SetDirty(castleObj);
 
-        // 10. Setup GridManager in Scene
+        // 9.2 Setup GridBorder Sprite & GridTile Prefab in Assets/Prefabs
+        Sprite gridBorderSprite = GetOrCreateGridBorderSprite();
+        GameObject gridTilePrefab = SetupGridTilePrefab(gridBorderSprite);
+
+        // 10. Setup GridManager in Scene with GridTile Prefab Instances
         GameObject gridObj = GameObject.Find("GridManager");
         if (gridObj == null)
         {
             gridObj = new GameObject("GridManager");
             Undo.RegisterCreatedObjectUndo(gridObj, "Create GridManager");
         }
+        gridObj.transform.position = Vector3.zero;
+
         GridManager gridManager = gridObj.GetComponent<GridManager>();
         if (gridManager == null) gridManager = gridObj.AddComponent<GridManager>();
-        gridManager.origin = new Vector2(-16.0f, 1.5f);
-        gridManager.columns = 17;
-        gridManager.rows = 10;
+        gridManager.tileBorderSprite = gridBorderSprite;
+        gridManager.gridTilePrefab = gridTilePrefab;
+        gridManager.origin = new Vector2(-17.0f, 1.0f);
+        gridManager.columns = 19;
+        gridManager.rows = 11;
         gridManager.cellSize = 1.0f;
         gridManager.GenerateGrid();
+
+        // Save GridManager as Prefab in Assets/Prefabs/
+        PrefabUtility.SaveAsPrefabAssetAndConnect(gridObj, "Assets/Prefabs/GridManager.prefab", InteractionMode.AutomatedAction);
         EditorUtility.SetDirty(gridManager);
 
         // 11. Setup TowerPlacementManager in Scene
@@ -371,6 +383,80 @@ public static class MapSetupHelper
         SpriteRenderer sr = piece.AddComponent<SpriteRenderer>();
         sr.sprite = sprite;
         sr.sortingOrder = sortingOrder;
+    }
+
+    private static Sprite GetOrCreateGridBorderSprite()
+    {
+        string path = "Assets/Sprites/Terrain/GridBorder.png";
+
+        int size = 64;
+        Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        texture.filterMode = FilterMode.Point;
+        Color[] pixels = new Color[size * size];
+        Color borderColor = Color.white;
+        Color innerColor = Color.clear;
+
+        for (int y = 0; y < size; y++)
+        {
+            for (int x = 0; x < size; x++)
+            {
+                if (x == 0 || x == size - 1 || y == 0 || y == size - 1)
+                {
+                    pixels[y * size + x] = borderColor;
+                }
+                else
+                {
+                    pixels[y * size + x] = innerColor;
+                }
+            }
+        }
+
+        texture.SetPixels(pixels);
+        texture.Apply();
+
+        byte[] pngData = ImageConversion.EncodeToPNG(texture);
+        File.WriteAllBytes(path, pngData);
+        AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+
+        TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
+        if (importer != null)
+        {
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Single;
+            importer.spritePixelsPerUnit = 64;
+            importer.filterMode = FilterMode.Point;
+            importer.alphaIsTransparency = true;
+            importer.textureCompression = TextureImporterCompression.Uncompressed;
+            importer.SaveAndReimport();
+        }
+
+        return AssetDatabase.LoadAssetAtPath<Sprite>(path);
+    }
+
+    private static GameObject SetupGridTilePrefab(Sprite borderSprite)
+    {
+        string path = "Assets/Prefabs/GridTile.prefab";
+
+        GameObject temp = new GameObject("GridTile");
+
+        SpriteRenderer sr = temp.AddComponent<SpriteRenderer>();
+        sr.sprite = borderSprite;
+        sr.sortingOrder = 0;
+
+        BoxCollider2D col = temp.AddComponent<BoxCollider2D>();
+        col.size = new Vector2(0.95f, 0.95f);
+        col.isTrigger = true;
+
+        GridTile tile = temp.AddComponent<GridTile>();
+        tile.normalColor = new Color(1f, 1f, 1f, 0.0f);
+        tile.placementModeColor = new Color(1f, 1f, 1f, 0.38f);
+        tile.placementBlockedColor = new Color(1f, 1f, 1f, 0.10f);
+        tile.hoverBuildableColor = new Color(0.2f, 1.0f, 0.4f, 0.70f);
+        tile.hoverUnbuildableColor = new Color(1.0f, 0.2f, 0.2f, 0.70f);
+
+        GameObject prefab = PrefabUtility.SaveAsPrefabAsset(temp, path);
+        GameObject.DestroyImmediate(temp);
+        return prefab;
     }
 }
 #endif

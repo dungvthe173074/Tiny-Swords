@@ -6,12 +6,13 @@ public class GridManager : MonoBehaviour
     public static GridManager Instance { get; private set; }
 
     [Header("Grid Dimensions (Full Camera View)")]
-    public Vector2 origin = new Vector2(-16.0f, 1.5f);
-    public int columns = 17;
-    public int rows = 10;
+    public Vector2 origin = new Vector2(-17.0f, 1.0f);
+    public int columns = 19;
+    public int rows = 11;
     public float cellSize = 1.0f;
 
     [Header("Visual Settings")]
+    public GameObject gridTilePrefab;
     public Sprite tileBorderSprite;
 
     private readonly List<GridTile> allTiles = new List<GridTile>();
@@ -24,11 +25,23 @@ public class GridManager : MonoBehaviour
             return;
         }
         Instance = this;
+
+        if (tileBorderSprite == null)
+        {
+            tileBorderSprite = CreateTileBorderSprite();
+        }
+
+        allTiles.Clear();
+        allTiles.AddRange(GetComponentsInChildren<GridTile>());
     }
 
     private void Start()
     {
-        GenerateGrid();
+        if (allTiles.Count == 0)
+        {
+            GenerateGrid();
+        }
+        RefreshAllTileVisuals();
     }
 
     [ContextMenu("Rebuild Grid")]
@@ -56,35 +69,108 @@ public class GridManager : MonoBehaviour
                     0f
                 );
 
-                GameObject tileObj = new GameObject($"Tile_{x}_{y}");
-                tileObj.transform.SetParent(transform);
+                GameObject tileObj = null;
+#if UNITY_EDITOR
+                if (gridTilePrefab != null && !Application.isPlaying)
+                {
+                    tileObj = (GameObject)UnityEditor.PrefabUtility.InstantiatePrefab(gridTilePrefab, transform);
+                }
+#endif
+                if (tileObj == null && gridTilePrefab != null)
+                {
+                    tileObj = Instantiate(gridTilePrefab, transform);
+                }
+
+                if (tileObj == null)
+                {
+                    tileObj = new GameObject($"Tile_{x}_{y}");
+                    tileObj.transform.SetParent(transform);
+
+                    SpriteRenderer sr = tileObj.AddComponent<SpriteRenderer>();
+                    sr.sprite = tileBorderSprite;
+                    sr.sortingOrder = 0;
+
+                    BoxCollider2D col = tileObj.AddComponent<BoxCollider2D>();
+                    col.size = new Vector2(cellSize * 0.95f, cellSize * 0.95f);
+                    col.isTrigger = true;
+
+                    tileObj.AddComponent<GridTile>();
+                }
+
+                tileObj.name = $"Tile_{x}_{y}";
                 tileObj.transform.position = worldPos;
 
-                SpriteRenderer sr = tileObj.AddComponent<SpriteRenderer>();
-                sr.sprite = tileBorderSprite;
-                sr.sortingOrder = 0;
+                GridTile tile = tileObj.GetComponent<GridTile>();
+                if (tile != null)
+                {
+                    tile.gridCoord = new Vector2Int(x, y);
+                    bool isBridge = IsPositionOnBridge(worldPos);
+                    bool isInsideCamera = IsTileFullyInsideCamera(worldPos);
+                    tile.SetTileState(!isBridge && isInsideCamera);
 
-                BoxCollider2D col = tileObj.AddComponent<BoxCollider2D>();
-                col.size = new Vector2(cellSize * 0.95f, cellSize * 0.95f);
-                col.isTrigger = true;
+                    SpriteRenderer sr = tileObj.GetComponent<SpriteRenderer>();
+                    if (sr != null && sr.sprite == null)
+                    {
+                        sr.sprite = tileBorderSprite;
+                        sr.sortingOrder = 0;
+                    }
 
-                GridTile tile = tileObj.AddComponent<GridTile>();
-                tile.gridCoord = new Vector2Int(x, y);
-
-                bool isBridge = IsPositionOnBridge(worldPos);
-                tile.SetTileState(!isBridge);
-
-                allTiles.Add(tile);
+                    allTiles.Add(tile);
+                }
             }
+        }
+        UpdateTileBuildableStates();
+        RefreshAllTileVisuals();
+    }
+
+    public void UpdateTileBuildableStates()
+    {
+        foreach (var tile in allTiles)
+        {
+            if (tile == null) continue;
+            bool isBridge = IsPositionOnBridge(tile.transform.position);
+            bool isInsideCamera = IsTileFullyInsideCamera(tile.transform.position);
+            tile.SetTileState(!isBridge && isInsideCamera);
         }
     }
 
     public void RefreshAllTileVisuals()
     {
+        UpdateTileBuildableStates();
         foreach (var tile in allTiles)
         {
             if (tile != null) tile.UpdateVisuals();
         }
+    }
+
+    public bool IsTileFullyInsideCamera(Vector3 tileCenter)
+    {
+        Camera cam = Camera.main;
+        if (cam == null) return true;
+
+        float halfCell = cellSize * 0.5f;
+        float camHalfHeight = cam.orthographicSize;
+        float camHalfWidth = camHalfHeight * cam.aspect;
+        Vector3 camPos = cam.transform.position;
+
+        float camLeft = camPos.x - camHalfWidth;
+        float camRight = camPos.x + camHalfWidth;
+        float camBottom = camPos.y - camHalfHeight;
+        float camTop = camPos.y + camHalfHeight;
+
+        float tileLeft = tileCenter.x - halfCell;
+        float tileRight = tileCenter.x + halfCell;
+        float tileBottom = tileCenter.y - halfCell;
+        float tileTop = tileCenter.y + halfCell;
+
+        // Tile must be completely inside camera viewport bounds (with small margin)
+        float margin = 0.05f;
+        bool isInside = (tileLeft >= camLeft + margin) &&
+                        (tileRight <= camRight - margin) &&
+                        (tileBottom >= camBottom + margin) &&
+                        (tileTop <= camTop - margin);
+
+        return isInside;
     }
 
     private bool IsPositionOnBridge(Vector3 pos)
@@ -114,13 +200,14 @@ public class GridManager : MonoBehaviour
         texture.filterMode = FilterMode.Point;
         Color[] pixels = new Color[size * size];
 
-        Color borderColor = new Color(1f, 1f, 1f, 0.45f);
-        Color innerColor = new Color(1f, 1f, 1f, 0.02f);
+        Color borderColor = Color.white;
+        Color innerColor = Color.clear;
 
         for (int y = 0; y < size; y++)
         {
             for (int x = 0; x < size; x++)
             {
+                // Thin 1-pixel border
                 if (x == 0 || x == size - 1 || y == 0 || y == size - 1)
                 {
                     pixels[y * size + x] = borderColor;

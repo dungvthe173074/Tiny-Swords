@@ -24,6 +24,7 @@ public class TowerPlacementManager : MonoBehaviour
     public event Action<int> OnGoldChanged;
     public event Action<Tower> OnTowerSelected;
 
+    private Vector3Int? lastHoveredCell = null;
     private GridTile lastHoveredTile = null;
 
     private void Awake()
@@ -68,26 +69,24 @@ public class TowerPlacementManager : MonoBehaviour
             return;
         }
 
-        // 2. Prevent click-through if mouse is hovering over any UI element (like the cancel button or tower buttons)
+        // 2. Prevent click-through if mouse is hovering over any UI element
         if (TowerPlacementUI.IsMouseOverAnyUI())
         {
-            if (lastHoveredTile != null)
-            {
-                lastHoveredTile.SetHovered(false);
-                lastHoveredTile = null;
-            }
+            ClearAllHovers();
             return;
         }
 
-        // 3. Raycast to detect hover and click on GridTile
         Camera cam = Camera.main;
-        if (cam != null)
+        if (cam == null) return;
+
+        Vector3 worldPoint = cam.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 10f));
+
+        // 3A. Check for GridTile Prefab (Raycast 2D)
+        RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero);
+        GridTile hoveredTile = hit.collider != null ? hit.collider.GetComponent<GridTile>() : null;
+
+        if (hoveredTile != null || lastHoveredTile != null)
         {
-            Vector3 worldPoint = cam.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 10f));
-            RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero);
-
-            GridTile hoveredTile = hit.collider != null ? hit.collider.GetComponent<GridTile>() : null;
-
             if (hoveredTile != lastHoveredTile)
             {
                 if (lastHoveredTile != null) lastHoveredTile.SetHovered(false);
@@ -99,6 +98,57 @@ public class TowerPlacementManager : MonoBehaviour
             {
                 OnTileClicked(hoveredTile);
             }
+            return;
+        }
+
+        // 3B. Tilemap Cell Detection & Hover (Fallback to TilemapManager if active)
+        if (TilemapManager.Instance != null)
+        {
+            Vector3Int cellPos = TilemapManager.Instance.WorldToCell(worldPoint);
+
+            if (TilemapManager.Instance.IsCellWithinGrid(cellPos))
+            {
+                lastHoveredCell = cellPos;
+
+                if (HasSelectedTower)
+                {
+                    bool canBuild = TilemapManager.Instance.IsCellBuildable(cellPos) 
+                                    && !TilemapManager.Instance.IsCellOccupied(cellPos) 
+                                    && CanAffordSelectedTower;
+                    TilemapManager.Instance.SetHoveredCell(cellPos, canBuild);
+
+                    if (leftPressed)
+                    {
+                        OnCellClicked(cellPos);
+                    }
+                }
+                else
+                {
+                    bool canBuild = TilemapManager.Instance.IsCellBuildable(cellPos) 
+                                    && !TilemapManager.Instance.IsCellOccupied(cellPos);
+                    TilemapManager.Instance.SetHoveredCell(cellPos, canBuild);
+                }
+            }
+            else
+            {
+                TilemapManager.Instance.ClearHover();
+                lastHoveredCell = null;
+            }
+        }
+    }
+
+    private void ClearAllHovers()
+    {
+        if (lastHoveredTile != null)
+        {
+            lastHoveredTile.SetHovered(false);
+            lastHoveredTile = null;
+        }
+
+        if (TilemapManager.Instance != null)
+        {
+            TilemapManager.Instance.ClearHover();
+            lastHoveredCell = null;
         }
     }
 
@@ -128,11 +178,7 @@ public class TowerPlacementManager : MonoBehaviour
         SelectedTowerPrefab = null;
         OnTowerSelected?.Invoke(null);
 
-        if (lastHoveredTile != null)
-        {
-            lastHoveredTile.SetHovered(false);
-            lastHoveredTile = null;
-        }
+        ClearAllHovers();
 
         if (GridManager.Instance != null)
         {
@@ -166,7 +212,43 @@ public class TowerPlacementManager : MonoBehaviour
         tile.placedTower = towerObj.GetComponent<Tower>();
         tile.UpdateVisuals();
 
+        if (GridManager.Instance != null)
+        {
+            GridManager.Instance.RefreshAllTileVisuals();
+        }
+
         Debug.Log($"[TowerPlacement] Đã xây {SelectedTowerPrefab.towerName} thành công! Vàng còn lại: {playerGold}");
+    }
+
+    public void OnCellClicked(Vector3Int cellPos)
+    {
+        if (!HasSelectedTower) return;
+        if (TilemapManager.Instance == null) return;
+
+        if (!TilemapManager.Instance.IsCellBuildable(cellPos) || TilemapManager.Instance.IsCellOccupied(cellPos))
+        {
+            Debug.Log("[TowerPlacement] Vị trí này không thể đặt tháp (vướng cầu hoặc đã có tháp)!");
+            return;
+        }
+
+        if (playerGold < SelectedTowerPrefab.cost)
+        {
+            Debug.Log($"[TowerPlacement] Không đủ vàng! Cần {SelectedTowerPrefab.cost} vàng, bạn có {playerGold} vàng.");
+            return;
+        }
+
+        // Build tower
+        playerGold -= SelectedTowerPrefab.cost;
+        OnGoldChanged?.Invoke(playerGold);
+
+        Vector3 spawnPos = TilemapManager.Instance.GetCellCenterWorld(cellPos) + new Vector3(0f, 0.2f, 0f);
+        GameObject towerObj = Instantiate(SelectedTowerPrefab.gameObject, spawnPos, Quaternion.identity);
+        Tower tower = towerObj.GetComponent<Tower>();
+
+        TilemapManager.Instance.PlaceTower(cellPos, tower);
+        TilemapManager.Instance.ClearHover();
+
+        Debug.Log($"[TowerPlacement] Đã xây {SelectedTowerPrefab.towerName} tại ô {cellPos}! Vàng còn lại: {playerGold}");
     }
 
     public void AddGold(int amount)
