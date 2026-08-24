@@ -63,6 +63,15 @@ public class Projectile : MonoBehaviour
         if (targetEnemy != null)
         {
             targetEnemy.TakeDamage(damage);
+
+            if (projectileType == ProjectileType.Poison)
+            {
+                targetEnemy.ApplySlow(0.55f, 3.5f); // 45% Slow for 3.5s
+            }
+            else if (projectileType == ProjectileType.Fire)
+            {
+                targetEnemy.ApplyBurn(30f, 3.0f); // 30 DPS Burn for 3.0s (total 90 burn damage)
+            }
         }
         Destroy(gameObject);
     }

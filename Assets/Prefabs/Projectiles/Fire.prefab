@@ -106,5 +106,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
   projectileType: 2
-  speed: 8.5
-  damage: 65
+  speed: 9
+  damage: 75

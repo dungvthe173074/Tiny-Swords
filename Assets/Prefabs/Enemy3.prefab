@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1141000000000005}
   - component: {fileID: 1141000000000006}
   m_Layer: 0
-  m_Name: Enemy 3
+  m_Name: Enemy3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -101,7 +101,6 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1100000000000003}
-  serializedVersion: 0
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6d9bfdad6a910134ea13ef8b3412bb6a, type: 3}
@@ -114,11 +113,16 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1100000000000003}
-  serializedVersion: 0
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  maxHealth: 160
-  moveSpeed: 4.5
+  baseMaxHealth: 150
+  baseMoveSpeed: 2.5
+  baseGoldReward: 22
+  baseCastleDamage: 1
+  maxHealth: 150
+  moveSpeed: 2.5
+  goldReward: 22
+  castleDamage: 1

@@ -167,11 +167,13 @@ public class TilemapManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Initializes buildable vs unbuildable cell lookup data based on bridge geometry.
+    /// <summary>
+    /// Initializes buildable vs unbuildable cell lookup data based on dynamic obstacle geometry.
     /// </summary>
     public void InitializeGridBounds()
     {
         buildableCells.Clear();
+        List<Bounds> obstacleBounds = GetDynamicObstacleBounds();
 
         for (int x = 0; x < columns; x++)
         {
@@ -180,7 +182,7 @@ public class TilemapManager : MonoBehaviour
                 Vector3Int cellPos = new Vector3Int(x, y, 0);
                 Vector3 worldPos = GetCellCenterWorld(cellPos);
 
-                if (!IsPositionOnBridge(worldPos))
+                if (!IsPositionOverlappingObstacles(worldPos, obstacleBounds))
                 {
                     buildableCells.Add(cellPos);
                 }
@@ -229,22 +231,54 @@ public class TilemapManager : MonoBehaviour
         }
     }
 
-    private bool IsPositionOnBridge(Vector3 pos)
+    public List<Bounds> GetDynamicObstacleBounds()
     {
-        // Bottom horizontal bridge: y ≈ 3.5, x from -16.5 to -9.0
-        if (Mathf.Abs(pos.y - 3.5f) < 0.70f && pos.x <= -8.8f) return true;
+        List<Bounds> boundsList = new List<Bounds>();
+        GameObject bridgesObj = GameObject.Find("Bridges");
+        if (bridgesObj != null)
+        {
+            SpriteRenderer[] bridgeRenderers = bridgesObj.GetComponentsInChildren<SpriteRenderer>();
+            foreach (var sr in bridgeRenderers)
+            {
+                if (sr != null && sr.enabled && sr.gameObject.activeInHierarchy)
+                {
+                    boundsList.Add(sr.bounds);
+                }
+            }
+        }
 
-        // Vertical bridge 1: x ≈ -9.5, y from 3.0 to 7.0
-        if (Mathf.Abs(pos.x - (-9.5f)) < 0.70f && pos.y >= 3.0f && pos.y <= 7.0f) return true;
+        GameObject castleObj = GameObject.Find("MainCastle");
+        if (castleObj != null)
+        {
+            SpriteRenderer castleSr = castleObj.GetComponent<SpriteRenderer>();
+            if (castleSr != null) boundsList.Add(castleSr.bounds);
+        }
 
-        // Middle horizontal bridge: y ≈ 6.5, x from -10.0 to -5.0
-        if (Mathf.Abs(pos.y - 6.5f) < 0.70f && pos.x >= -10.0f && pos.x <= -5.0f) return true;
+        return boundsList;
+    }
 
-        // Vertical bridge 2: x ≈ -5.5, y from 6.0 to 10.0
-        if (Mathf.Abs(pos.x - (-5.5f)) < 0.70f && pos.y >= 6.0f && pos.y <= 10.0f) return true;
+    private bool IsPositionOverlappingObstacles(Vector3 pos, List<Bounds> obstacleBounds)
+    {
+        float checkSize = cellSize * 0.70f;
+        Bounds tileBounds = new Bounds(pos, new Vector3(checkSize, checkSize, 10f));
 
-        // Top horizontal bridge: y ≈ 9.5, x from -6.0 to 1.5
-        if (Mathf.Abs(pos.y - 9.5f) < 0.70f && pos.x >= -6.0f) return true;
+        if (obstacleBounds != null)
+        {
+            foreach (var b in obstacleBounds)
+            {
+                if (b.Intersects(tileBounds)) return true;
+            }
+        }
+
+        Collider2D hit = Physics2D.OverlapBox(pos, new Vector2(checkSize, checkSize), 0f);
+        if (hit != null && hit.GetComponent<GridTile>() == null)
+        {
+            string hitName = hit.gameObject.name.ToLower();
+            if (hitName.Contains("bridge") || hitName.Contains("castle") || hit.GetComponent<Tower>() != null)
+            {
+                return true;
+            }
+        }
 
         return false;
     }

@@ -22,6 +22,7 @@ public static class MapSetupHelper
     }
 
     [MenuItem("Tools/Rebuild Map 1 Bridges & Waypoints")]
+    [MenuItem("Tools/Setup Boss & Final Wave (Boss Orc)")]
     public static void RebuildMap()
     {
         Scene currentScene = SceneManager.GetActiveScene();
@@ -160,7 +161,7 @@ public static class MapSetupHelper
             wpTransforms[i] = wp.transform;
         }
 
-        // 6. Update WaveSpawner with waypoints
+        // 6. Update WaveSpawner with waypoints and balanced waves
         GameObject waveSpawnerObj = GameObject.Find("WaveSpawner");
         if (waveSpawnerObj != null)
         {
@@ -168,37 +169,58 @@ public static class MapSetupHelper
             if (waveSpawner != null)
             {
                 waveSpawner.waypoints = wpTransforms;
-                if (waveSpawner.waves != null)
+                waveSpawner.timeBetweenWaves = 8f;
+
+                GameObject e1 = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Enemy1.prefab");
+                GameObject e2 = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Enemy2.prefab");
+                GameObject e3 = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Enemy3.prefab");
+                GameObject e4 = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Enemy4.prefab");
+
+                GameObject bossPrefab = SetupBossPrefab();
+
+                waveSpawner.waves = new WaveSpawner.WaveConfig[]
                 {
-                    for (int w = 0; w < waveSpawner.waves.Length; w++)
-                    {
-                        if (waveSpawner.waves[w] != null)
-                        {
-                            waveSpawner.waves[w].spawnInterval = 2f;
-                        }
-                    }
-                }
+                    new WaveSpawner.WaveConfig { waveName = "Wave 1 - Đội Tiên Phong (Warriors)", enemyPrefab = e1, enemyCount = 10, spawnInterval = 1.8f },
+                    new WaveSpawner.WaveConfig { waveName = "Wave 2 - Cung Thủ Tập Kích (Archers)", enemyPrefab = e2, enemyCount = 10, spawnInterval = 1.6f },
+                    new WaveSpawner.WaveConfig { waveName = "Wave 3 - Kỵ Sĩ Thiết Giáp (Lancers)", enemyPrefab = e3, enemyCount = 10, spawnInterval = 1.6f },
+                    new WaveSpawner.WaveConfig { waveName = "Wave 4 - Đội Thầy Tu Phòng Thủ (Monks)", enemyPrefab = e4, enemyCount = 10, spawnInterval = 1.8f },
+                    new WaveSpawner.WaveConfig { waveName = "Wave 5 - 👹 TRÙM CUỐI (ĐẠI TƯỚNG ORC)", enemyPrefab = bossPrefab, enemyCount = 1, spawnInterval = 1.0f },
+                };
                 EditorUtility.SetDirty(waveSpawner);
+
+                // Remove loose Boss 1 object in scene if dragged manually
+                GameObject looseBoss = GameObject.Find("Boss 1");
+                if (looseBoss != null) Undo.DestroyObjectImmediate(looseBoss);
             }
         }
 
-        // 7. Setup Projectile Prefabs: Arrow, Poison, Fire
-        GameObject arrowPrefab = SetupProjectilePrefab("Arrow", ProjectileType.Arrow, 12f, 20f,
+        // 6.1 Update Enemy Prefab Stats (Giảm 1/3 Máu Quái Thường & Tăng 3x Máu Boss)
+        UpdateEnemyPrefab("Assets/Prefabs/Enemy1.prefab", 380f, 2.2f, 16);
+        UpdateEnemyPrefab("Assets/Prefabs/Enemy2.prefab", 280f, 2.8f, 18);
+        UpdateEnemyPrefab("Assets/Prefabs/Enemy3.prefab", 550f, 2.3f, 22);
+        UpdateEnemyPrefab("Assets/Prefabs/Enemy4.prefab", 1200f, 1.4f, 35);
+        if (File.Exists("Assets/Prefabs/Enemy.prefab"))
+        {
+            UpdateEnemyPrefab("Assets/Prefabs/Enemy.prefab", 380f, 2.2f, 16);
+        }
+
+        // 7. Setup Projectile Prefabs: Arrow, Poison, Fire (Tăng tốc độ bay & sát thương cân bằng)
+        GameObject arrowPrefab = SetupProjectilePrefab("Arrow", ProjectileType.Arrow, 14f, 25f,
             "Assets/Sprites/Units/Blue Units/Archer/Arrow.png", Color.white, new Vector3(0.8f, 0.8f, 1f));
 
-        GameObject poisonPrefab = SetupProjectilePrefab("Poison", ProjectileType.Poison, 9f, 32f,
+        GameObject poisonPrefab = SetupProjectilePrefab("Poison", ProjectileType.Poison, 10f, 42f,
             "Assets/Sprites/Particle FX/Explosion_01.png", new Color(0.2f, 1.0f, 0.35f, 1.0f), new Vector3(0.9f, 0.9f, 1f), "Explosion_01_0");
 
-        GameObject firePrefab = SetupProjectilePrefab("Fire", ProjectileType.Fire, 8.5f, 65f,
+        GameObject firePrefab = SetupProjectilePrefab("Fire", ProjectileType.Fire, 9.0f, 75f,
             "Assets/Sprites/Tiny Swords (Update 010)/Effects/Fire/Fire.png", Color.white, new Vector3(0.6f, 0.6f, 1f), "Fire_0");
 
-        // 8. Setup 3 Tower Prefabs (All using the identical blue stone tower building sprite `Tower_0`)
+        // 8. Setup 3 Tower Prefabs (Cân Bằng Tháp: Tầm Bắn Xa Hơn, DPS Hợp Lý)
         List<Tower> towerPrefabs = new List<Tower>();
-        towerPrefabs.Add(SetupTowerPrefab("Tower_Arrow", "Tháp Tên", 50, 4.2f, 1.4f, 20f, arrowPrefab));
-        towerPrefabs.Add(SetupTowerPrefab("Tower_Poison", "Tháp Độc", 75, 3.6f, 1.0f, 32f, poisonPrefab));
-        towerPrefabs.Add(SetupTowerPrefab("Tower_Fire", "Tháp Lửa", 100, 3.0f, 0.7f, 65f, firePrefab));
+        towerPrefabs.Add(SetupTowerPrefab("Tower_Arrow", "Tháp Tên", 50, 4.5f, 1.6f, 25f, arrowPrefab));
+        towerPrefabs.Add(SetupTowerPrefab("Tower_Poison", "Tháp Độc", 75, 3.8f, 1.2f, 42f, poisonPrefab));
+        towerPrefabs.Add(SetupTowerPrefab("Tower_Fire", "Tháp Lửa", 100, 3.2f, 0.85f, 75f, firePrefab));
 
-        // 9. Setup GameManager in Scene
+        // 9. Setup GameManager in Scene (Máu Nhà Chính: 15)
         GameObject gmObj = GameObject.Find("GameManager");
         if (gmObj == null)
         {
@@ -207,8 +229,8 @@ public static class MapSetupHelper
         }
         GameManager gameManager = gmObj.GetComponent<GameManager>();
         if (gameManager == null) gameManager = gmObj.AddComponent<GameManager>();
-        gameManager.maxBaseHealth = 10;
-        gameManager.currentBaseHealth = 10;
+        gameManager.maxBaseHealth = 15;
+        gameManager.currentBaseHealth = 15;
         EditorUtility.SetDirty(gameManager);
 
         // 9.1 Setup Castle building at destination goal (Nhà chính)
@@ -236,7 +258,26 @@ public static class MapSetupHelper
 
         EditorUtility.SetDirty(castleObj);
 
-        // 9.2 Setup GridBorder Sprite & GridTile Prefab in Assets/Prefabs
+        // 9.2 Setup DayNightCycle in Scene (Chu Kỳ 30s Mượt Mà Liên Tục, Tốc Độ Đêm +30% Hợp Lý)
+        GameObject dncObj = GameObject.Find("DayNightCycle");
+        if (dncObj == null)
+        {
+            dncObj = new GameObject("DayNightCycle");
+            Undo.RegisterCreatedObjectUndo(dncObj, "Create DayNightCycle");
+        }
+        DayNightCycle dnc = dncObj.GetComponent<DayNightCycle>();
+        if (dnc == null) dnc = dncObj.AddComponent<DayNightCycle>();
+        dnc.cycleDuration = 30.0f;
+        dnc.maxLightIntensity = 1.0f;
+        dnc.minLightIntensity = 0.2f; // 80% visibility reduction at night
+        dnc.nightSpeedMultiplier = 1.30f; // Buff +30% speed
+        dnc.nightCastleDamage = 1;
+        dnc.daySpeedMultiplier = 1.0f; // Debuff to standard
+        dnc.dayCastleDamage = 1;
+        dnc.FindGlobalLightIfNeeded();
+        EditorUtility.SetDirty(dnc);
+
+        // 9.3 Setup GridBorder Sprite & GridTile Prefab in Assets/Prefabs
         Sprite gridBorderSprite = GetOrCreateGridBorderSprite();
         GameObject gridTilePrefab = SetupGridTilePrefab(gridBorderSprite);
 
@@ -263,7 +304,7 @@ public static class MapSetupHelper
         PrefabUtility.SaveAsPrefabAssetAndConnect(gridObj, "Assets/Prefabs/GridManager.prefab", InteractionMode.AutomatedAction);
         EditorUtility.SetDirty(gridManager);
 
-        // 11. Setup TowerPlacementManager in Scene
+        // 11. Setup TowerPlacementManager in Scene (Vàng khởi đầu 250G)
         GameObject pmObj = GameObject.Find("TowerPlacementManager");
         if (pmObj == null)
         {
@@ -272,7 +313,7 @@ public static class MapSetupHelper
         }
         TowerPlacementManager placementManager = pmObj.GetComponent<TowerPlacementManager>();
         if (placementManager == null) placementManager = pmObj.AddComponent<TowerPlacementManager>();
-        placementManager.playerGold = 200;
+        placementManager.playerGold = 250;
         placementManager.availableTowers = towerPrefabs;
         EditorUtility.SetDirty(placementManager);
 
@@ -286,7 +327,8 @@ public static class MapSetupHelper
 
         EditorSceneManager.MarkSceneDirty(currentScene);
         EditorSceneManager.SaveOpenScenes();
-        Debug.Log("[MapSetupHelper] Complete Game with Base Health & Range label ready!");
+        MainMenuSetupHelper.EnsureBuildSettings();
+        Debug.Log("[MapSetupHelper] Game Rebalanced: 250G Start, 15 HP Castle, Balanced Enemies & Towers!");
     }
 
     private static GameObject SetupProjectilePrefab(string name, ProjectileType type, float speed, float damage, string spritePath, Color tint, Vector3 scale, string subSpriteName = null)
@@ -352,9 +394,7 @@ public static class MapSetupHelper
         if (s != null) sr.sprite = s;
         sr.sortingOrder = 3;
 
-        BoxCollider2D col = temp.AddComponent<BoxCollider2D>();
-        col.isTrigger = true;
-        col.size = new Vector2(1.2f, 1.8f);
+        temp.layer = 2; // Ignore Raycast layer
 
         // Fire point at the top battlements of the tower
         GameObject fpObj = new GameObject("FirePoint");
@@ -394,13 +434,14 @@ public static class MapSetupHelper
         texture.filterMode = FilterMode.Point;
         Color[] pixels = new Color[size * size];
         Color borderColor = Color.white;
-        Color innerColor = Color.clear;
+        Color innerColor = new Color(1f, 1f, 1f, 0.08f); // Soft 8% inner fill
+        int borderWidth = 2; // 2-pixel crisp border ensures all 4 edges are bold and sharp
 
         for (int y = 0; y < size; y++)
         {
             for (int x = 0; x < size; x++)
             {
-                if (x == 0 || x == size - 1 || y == 0 || y == size - 1)
+                if (x < borderWidth || x >= size - borderWidth || y < borderWidth || y >= size - borderWidth)
                 {
                     pixels[y * size + x] = borderColor;
                 }
@@ -444,19 +485,106 @@ public static class MapSetupHelper
         sr.sortingOrder = 0;
 
         BoxCollider2D col = temp.AddComponent<BoxCollider2D>();
-        col.size = new Vector2(0.95f, 0.95f);
+        col.size = new Vector2(1.0f, 1.0f);
         col.isTrigger = true;
 
         GridTile tile = temp.AddComponent<GridTile>();
         tile.normalColor = new Color(1f, 1f, 1f, 0.0f);
-        tile.placementModeColor = new Color(1f, 1f, 1f, 0.38f);
-        tile.placementBlockedColor = new Color(1f, 1f, 1f, 0.10f);
-        tile.hoverBuildableColor = new Color(0.2f, 1.0f, 0.4f, 0.70f);
-        tile.hoverUnbuildableColor = new Color(1.0f, 0.2f, 0.2f, 0.70f);
+        tile.placementModeColor = new Color(1f, 1f, 1f, 0.35f);
+        tile.placementBlockedColor = new Color(1f, 1f, 1f, 0.08f);
+        tile.hoverBuildableColor = new Color(0.15f, 1.0f, 0.35f, 0.90f);
+        tile.hoverUnbuildableColor = new Color(1.0f, 0.20f, 0.20f, 0.90f);
 
         GameObject prefab = PrefabUtility.SaveAsPrefabAsset(temp, path);
         GameObject.DestroyImmediate(temp);
         return prefab;
+    }
+
+    public static GameObject SetupBossPrefab()
+    {
+        string path = "Assets/Prefabs/Boss_Orc.prefab";
+        string spritePath = "Assets/Sprites/Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Orc/Orc with shadows/Orc.png";
+
+        Object[] subs = AssetDatabase.LoadAllAssetsAtPath(spritePath);
+        Dictionary<string, Sprite> spriteDict = new Dictionary<string, Sprite>();
+        foreach (var o in subs)
+        {
+            if (o is Sprite sp) spriteDict[sp.name] = sp;
+        }
+
+        GameObject temp = new GameObject("Boss_Orc");
+        temp.transform.localScale = new Vector3(4.0f, 4.0f, 1.0f);
+
+        SpriteRenderer sr = temp.AddComponent<SpriteRenderer>();
+        if (spriteDict.ContainsKey("Orc_0")) sr.sprite = spriteDict["Orc_0"];
+        sr.sortingOrder = 20;
+
+        EnemyMovement em = temp.AddComponent<EnemyMovement>();
+
+        Enemy enemy = temp.AddComponent<Enemy>();
+        enemy.baseMaxHealth = 10000f;
+        enemy.baseMoveSpeed = 0.85f;
+        enemy.baseGoldReward = 500;
+        enemy.baseCastleDamage = 15;
+        enemy.maxHealth = 10000f;
+        enemy.moveSpeed = 0.85f;
+        enemy.goldReward = 500;
+        enemy.castleDamage = 15;
+
+        BossOrc boss = temp.AddComponent<BossOrc>();
+        boss.bossName = "ĐẠI TƯỚNG ORC (TRÙM CUỐI)";
+
+        // 1. Idle: Orc_0 to Orc_5 (6 frames)
+        List<Sprite> idles = new List<Sprite>();
+        for (int i = 0; i <= 5; i++) if (spriteDict.ContainsKey($"Orc_{i}")) idles.Add(spriteDict[$"Orc_{i}"]);
+        boss.idleSprites = idles.ToArray();
+
+        // 2. Walk: Orc_6 to Orc_13 (8 frames)
+        List<Sprite> walks = new List<Sprite>();
+        for (int i = 6; i <= 13; i++) if (spriteDict.ContainsKey($"Orc_{i}")) walks.Add(spriteDict[$"Orc_{i}"]);
+        boss.walkSprites = walks.ToArray();
+
+        // 3. Attack: Orc_14 to Orc_26 (Attack 1 & Attack 2 combo - 13 frames)
+        List<Sprite> attacks = new List<Sprite>();
+        for (int i = 14; i <= 26; i++) if (spriteDict.ContainsKey($"Orc_{i}")) attacks.Add(spriteDict[$"Orc_{i}"]);
+        boss.attackSprites = attacks.ToArray();
+
+        // 4. Hurt: Orc_27 to Orc_30 (4 frames)
+        List<Sprite> hurts = new List<Sprite>();
+        for (int i = 27; i <= 30; i++) if (spriteDict.ContainsKey($"Orc_{i}")) hurts.Add(spriteDict[$"Orc_{i}"]);
+        boss.hurtSprites = hurts.ToArray();
+
+        // 5. Death: Orc_31 to Orc_34 (4 frames)
+        List<Sprite> deaths = new List<Sprite>();
+        for (int i = 31; i <= 34; i++) if (spriteDict.ContainsKey($"Orc_{i}")) deaths.Add(spriteDict[$"Orc_{i}"]);
+        boss.deathSprites = deaths.ToArray();
+
+        boss.animFps = 9f;
+
+        GameObject prefab = PrefabUtility.SaveAsPrefabAsset(temp, path);
+        GameObject.DestroyImmediate(temp);
+        return prefab;
+    }
+
+    private static void UpdateEnemyPrefab(string path, float hp, float speed, int gold)
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+        if (prefab != null)
+        {
+            Enemy enemy = prefab.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                enemy.baseMaxHealth = hp;
+                enemy.maxHealth = hp;
+                enemy.baseMoveSpeed = speed;
+                enemy.moveSpeed = speed;
+                enemy.baseGoldReward = gold;
+                enemy.goldReward = gold;
+                enemy.baseCastleDamage = 1;
+                enemy.castleDamage = 1;
+                EditorUtility.SetDirty(prefab);
+            }
+        }
     }
 }
 #endif

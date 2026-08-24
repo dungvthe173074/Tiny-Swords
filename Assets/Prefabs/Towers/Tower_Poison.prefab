@@ -186,8 +186,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Tower
   towerName: "Th\xE1p \u0110\u1ED9c"
   cost: 75
-  attackRange: 3.6
-  fireRate: 1
-  damage: 32
+  attackRange: 3.8
+  fireRate: 1.2
+  damage: 42
   projectilePrefab: {fileID: 4954934289680302343, guid: 3e307745c09dba24b9d0a8e357d592c4, type: 3}
   firePoint: {fileID: 2327090155543811533}

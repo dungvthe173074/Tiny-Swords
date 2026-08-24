@@ -44,23 +44,9 @@ public class TowerPlacementManager : MonoBehaviour
 
     private void HandleInput()
     {
-        Vector2 mouseScreenPos = Vector2.zero;
-        bool rightPressed = false;
-        bool leftPressed = false;
-
-#if ENABLE_INPUT_SYSTEM
-        if (Mouse.current != null)
-        {
-            mouseScreenPos = Mouse.current.position.ReadValue();
-            rightPressed = Mouse.current.rightButton.wasPressedThisFrame;
-            leftPressed = Mouse.current.leftButton.wasPressedThisFrame;
-        }
-#endif
-#if ENABLE_LEGACY_INPUT_MANAGER
-        mouseScreenPos = Input.mousePosition;
-        rightPressed = rightPressed || Input.GetMouseButtonDown(1);
-        leftPressed = leftPressed || Input.GetMouseButtonDown(0);
-#endif
+        Vector2 mouseScreenPos = InputHelper.MousePosition;
+        bool rightPressed = InputHelper.GetMouseButtonDown(1);
+        bool leftPressed = InputHelper.GetMouseButtonDown(0);
 
         // 1. Right Click to cancel
         if (rightPressed && HasSelectedTower)
@@ -81,9 +67,25 @@ public class TowerPlacementManager : MonoBehaviour
 
         Vector3 worldPoint = cam.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 10f));
 
-        // 3A. Check for GridTile Prefab (Raycast 2D)
-        RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero);
-        GridTile hoveredTile = hit.collider != null ? hit.collider.GetComponent<GridTile>() : null;
+        // 3A. Check for GridTile Prefab (Exact coordinate lookup + Raycast fallback)
+        GridTile hoveredTile = null;
+        if (GridManager.Instance != null)
+        {
+            hoveredTile = GridManager.Instance.GetTileAtWorldPos(worldPoint);
+        }
+        if (hoveredTile == null)
+        {
+            RaycastHit2D[] hits = Physics2D.RaycastAll(worldPoint, Vector2.zero);
+            for (int i = 0; i < hits.Length; i++)
+            {
+                GridTile t = hits[i].collider != null ? hits[i].collider.GetComponent<GridTile>() : null;
+                if (t != null)
+                {
+                    hoveredTile = t;
+                    break;
+                }
+            }
+        }
 
         if (hoveredTile != null || lastHoveredTile != null)
         {
@@ -189,8 +191,10 @@ public class TowerPlacementManager : MonoBehaviour
     public void OnTileClicked(GridTile tile)
     {
         if (!HasSelectedTower) return;
+        if (tile == null) return;
 
-        if (!tile.isBuildable || tile.isOccupied)
+        // Dynamic validation: cannot build on bridges, offscreen, or occupied tiles
+        if (!tile.isBuildable || tile.isOccupied || tile.placedTower != null)
         {
             Debug.Log("[TowerPlacement] Vị trí này không thể đặt tháp (vướng cầu hoặc đã có tháp)!");
             return;
@@ -202,14 +206,16 @@ public class TowerPlacementManager : MonoBehaviour
             return;
         }
 
-        // Build tower
+        // Deduct gold and build tower directly on tile center
         playerGold -= SelectedTowerPrefab.cost;
         OnGoldChanged?.Invoke(playerGold);
 
-        Vector3 spawnPos = tile.transform.position + new Vector3(0f, 0.2f, 0f);
+        Vector3 spawnPos = tile.transform.position;
         GameObject towerObj = Instantiate(SelectedTowerPrefab.gameObject, spawnPos, Quaternion.identity);
+        Tower newTower = towerObj.GetComponent<Tower>();
+
         tile.isOccupied = true;
-        tile.placedTower = towerObj.GetComponent<Tower>();
+        tile.placedTower = newTower;
         tile.UpdateVisuals();
 
         if (GridManager.Instance != null)

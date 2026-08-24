@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 public class TowerPlacementUI : MonoBehaviour
 {
@@ -18,12 +21,16 @@ public class TowerPlacementUI : MonoBehaviour
     private GUIStyle towerBtnDisabledStyle;
     private GUIStyle cancelBtnStyle;
     private GUIStyle tooltipStyle;
+    private GUIStyle dayNightTextStyle;
+    private GUIStyle dayNightTimerStyle;
     private GUIStyle endSubtitleStyle;
     private GUIStyle gameOverTitleStyle;
     private GUIStyle gameOverBtnStyle;
 
     private Texture2D mainBarTex;
     private Texture2D goldBadgeTex;
+    private Texture2D dayBadgeTex;
+    private Texture2D nightBadgeTex;
     private Texture2D btnNormalTex;
     private Texture2D btnHoverTex;
     private Texture2D btnActiveTex;
@@ -33,6 +40,7 @@ public class TowerPlacementUI : MonoBehaviour
     private Texture2D dimBackdropTex;
 
     private int hoveredTowerIndex = -1;
+    private bool isPaused = false;
     private static readonly List<Rect> activeUIRects = new List<Rect>();
 
     private void Awake()
@@ -44,18 +52,7 @@ public class TowerPlacementUI : MonoBehaviour
 
     public static bool IsMouseOverAnyUI()
     {
-        Vector2 mouseGuiPos;
-#if ENABLE_INPUT_SYSTEM
-        if (UnityEngine.InputSystem.Mouse.current != null)
-        {
-            Vector2 mouseScreen = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
-            mouseGuiPos = new Vector2(mouseScreen.x, Screen.height - mouseScreen.y);
-        }
-        else
-#endif
-        {
-            mouseGuiPos = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
-        }
+        Vector2 mouseGuiPos = InputHelper.MouseGUIPosition;
 
         for (int i = 0; i < activeUIRects.Count; i++)
         {
@@ -139,7 +136,17 @@ public class TowerPlacementUI : MonoBehaviour
             new Color(0.05f, 0.07f, 0.10f, 0.96f),
             new Color(0.35f, 0.48f, 0.65f, 0.95f));
 
-        // 9. Fullscreen Dim Backdrop
+        // 9. Day Badge (Warm Amber/Sunlight border)
+        dayBadgeTex = CreateSharpBorderTex(64, 64,
+            new Color(0.12f, 0.10f, 0.04f, 0.95f),
+            new Color(0.95f, 0.75f, 0.20f, 1f));
+
+        // 10. Night Badge (Deep Midnight Blue/Violet border)
+        nightBadgeTex = CreateSharpBorderTex(64, 64,
+            new Color(0.04f, 0.06f, 0.14f, 0.95f),
+            new Color(0.35f, 0.55f, 0.95f, 1f));
+
+        // 11. Fullscreen Dim Backdrop
         dimBackdropTex = new Texture2D(1, 1, TextureFormat.RGBA32, false);
         dimBackdropTex.SetPixel(0, 0, new Color(0.02f, 0.04f, 0.08f, 0.85f));
         dimBackdropTex.Apply();
@@ -228,6 +235,7 @@ public class TowerPlacementUI : MonoBehaviour
                 {
                     pm.DeselectTower();
                 }
+                curBtnX += 40f;
             }
 
             // 2. ULTRA-SLIM 1-LINE MICRO TOOLTIP
@@ -249,6 +257,67 @@ public class TowerPlacementUI : MonoBehaviour
                     string tipContent = $"{icon} <b>{t.towerName}</b>  •  ⚔️ <b>{t.damage}</b>  •  🎯 <b>{t.attackRange:F1}</b>  •  ⚡ <b>{t.fireRate:F1}/s</b>";
 
                     GUI.Label(new Rect(startX + 8, tipY + 1, tipW - 16, tipH), tipContent, tooltipStyle);
+                }
+            }
+
+            // 2.5 BOSS HEALTH BAR (PLACED DIRECTLY NEXT TO TOWER PLACEMENT BAR)
+            if (BossOrc.ActiveBoss != null)
+            {
+                BossOrc boss = BossOrc.ActiveBoss;
+                Enemy bossEnemy = boss.GetComponent<Enemy>();
+                if (bossEnemy != null && bossEnemy.maxHealth > 0f)
+                {
+                    float bossBarW = 280f;
+                    float bossBarH = barH;
+                    float bossBarX = startX + totalBarW + 10f;
+                    float bossBarY = startY;
+
+                    // Ensure it does not exceed screen width
+                    if (bossBarX + bossBarW > Screen.width - 12f)
+                    {
+                        bossBarW = Screen.width - bossBarX - 12f;
+                    }
+
+                    Rect bossRect = new Rect(bossBarX, bossBarY, bossBarW, bossBarH);
+                    activeUIRects.Add(bossRect);
+
+                    GUI.Box(bossRect, "", panelStyle);
+
+                    // Title and Enrage tag (Single Line)
+                    string enrageTag = boss.isEnraged ? " <color=#FF3333><b>[🔥 CUỒNG NỘ]</b></color>" : "";
+                    string title = $"👹 <b>BOSS</b>{enrageTag}";
+                    GUI.Label(new Rect(bossBarX + 8f, bossBarY + 3f, 150f, 18f), title, new GUIStyle(GUI.skin.label)
+                    {
+                        alignment = TextAnchor.MiddleLeft,
+                        fontSize = 11,
+                        fontStyle = FontStyle.Bold,
+                        richText = true,
+                        normal = { textColor = boss.isEnraged ? new Color(1f, 0.4f, 0.4f, 1f) : new Color(1f, 0.85f, 0.4f, 1f) }
+                    });
+
+                    // HP numerical text
+                    float hpRatio = Mathf.Clamp01(bossEnemy.CurrentHealth / bossEnemy.maxHealth);
+                    string hpText = $"{Mathf.CeilToInt(bossEnemy.CurrentHealth)} / {Mathf.CeilToInt(bossEnemy.maxHealth)}";
+                    GUI.Label(new Rect(bossBarX + bossBarW - 130f, bossBarY + 3f, 122f, 18f), hpText, new GUIStyle(GUI.skin.label)
+                    {
+                        alignment = TextAnchor.MiddleRight,
+                        fontSize = 10,
+                        fontStyle = FontStyle.Bold,
+                        normal = { textColor = new Color(0.9f, 0.9f, 0.9f, 0.95f) }
+                    });
+
+                    // Health Bar Track & Fill
+                    float innerW = bossBarW - 16f;
+                    float innerH = 14f;
+                    float innerX = bossBarX + 8f;
+                    float innerY = bossBarY + 22f;
+
+                    GUI.DrawTexture(new Rect(innerX, innerY, innerW, innerH), Texture2D.blackTexture);
+
+                    Color hpColor = boss.isEnraged ? new Color(1f, 0.2f, 0.2f, 1f) : new Color(0.95f, 0.25f, 0.2f, 1f);
+                    GUI.color = hpColor;
+                    GUI.DrawTexture(new Rect(innerX + 1, innerY + 1, (innerW - 2) * hpRatio, innerH - 2), Texture2D.whiteTexture);
+                    GUI.color = Color.white;
                 }
             }
         }
@@ -299,37 +368,112 @@ public class TowerPlacementUI : MonoBehaviour
                 }
             }
 
-            // BIGGER & PERFECTLY CENTERED PLAY BUTTON
-            float btnW = 160f;
-            float btnH = 85f;
-            float btnX = centerX - btnW * 0.5f;
-            float btnY = centerY + 80f;
-            Rect playBtnRect = new Rect(btnX, btnY, btnW, btnH);
+            // END GAME ACTION BUTTONS
+            float actionBtnW = 180f;
+            float actionBtnH = 46f;
+            float actionSpacing = 14f;
 
-            bool isHoverPlay = playBtnRect.Contains(mousePos);
-
-            if (playButtonTexture != null)
+            // Restart Button
+            Rect restartRect = new Rect(centerX - actionBtnW - actionSpacing * 0.5f, centerY + 80f, actionBtnW, actionBtnH);
+            activeUIRects.Add(restartRect);
+            if (GUI.Button(restartRect, "🔄  <b>CHƠI LẠI</b>", gameOverBtnStyle))
             {
-                if (isHoverPlay)
-                {
-                    GUI.color = new Color(1.2f, 1.2f, 1.2f, 1f);
-                }
-                GUI.DrawTexture(playBtnRect, playButtonTexture, ScaleMode.ScaleToFit);
-                GUI.color = Color.white;
+                gm.RestartGame();
+            }
 
-                if (GUI.Button(playBtnRect, "", GUIStyle.none))
-                {
-                    gm.RestartGame();
-                }
+            // Return to Main Menu Button
+            Rect menuBtnRect = new Rect(centerX + actionSpacing * 0.5f, centerY + 80f, actionBtnW, actionBtnH);
+            activeUIRects.Add(menuBtnRect);
+            if (GUI.Button(menuBtnRect, "🏠  <b>MENU CHÍNH</b>", towerBtnStyle))
+            {
+                Time.timeScale = 1f;
+                UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+            }
+        }
+
+        // 4. IN-GAME PAUSE MENU (ESC ONLY)
+        if (isPaused && gm != null && !gm.IsGameEnded)
+        {
+            Rect fullScreenRect = new Rect(0, 0, Screen.width, Screen.height);
+            activeUIRects.Add(fullScreenRect);
+            GUI.DrawTexture(fullScreenRect, dimBackdropTex);
+
+            float centerX = Screen.width * 0.5f;
+            float centerY = Screen.height * 0.5f;
+
+            float pauseW = 400f;
+            float pauseH = 300f;
+            Rect pauseBox = new Rect(centerX - pauseW * 0.5f, centerY - pauseH * 0.5f, pauseW, pauseH);
+            activeUIRects.Add(pauseBox);
+
+            GUI.Box(pauseBox, "", panelStyle);
+
+            GUI.Label(new Rect(pauseBox.x + 10f, pauseBox.y + 22f, pauseW - 20f, 32f), "<b>TẠM DỪNG TRẬN ĐẤU</b>", new GUIStyle(GUI.skin.label)
+            {
+                alignment = TextAnchor.MiddleCenter,
+                fontSize = 18,
+                fontStyle = FontStyle.Bold,
+                richText = true,
+                normal = { textColor = new Color(1f, 0.45f, 0.45f, 1f) }
+            });
+
+            float btnW = 290f;
+            float btnH = 46f;
+            float startY = pauseBox.y + 74f;
+            float spacing = 12f;
+
+            // Resume
+            Rect resumeRect = new Rect(centerX - btnW * 0.5f, startY, btnW, btnH);
+            activeUIRects.Add(resumeRect);
+            if (GUI.Button(resumeRect, "▶  <b>TIẾP TỤC CHƠI</b>", gameOverBtnStyle))
+            {
+                TogglePause();
+            }
+
+            // Restart
+            Rect restartPauseRect = new Rect(centerX - btnW * 0.5f, startY + (btnH + spacing), btnW, btnH);
+            activeUIRects.Add(restartPauseRect);
+            if (GUI.Button(restartPauseRect, "🔄  <b>CHƠI LẠI TỪ ĐẦU</b>", towerBtnStyle))
+            {
+                Time.timeScale = 1f;
+                gm.RestartGame();
+            }
+
+            // Main Menu
+            Rect menuPauseRect = new Rect(centerX - btnW * 0.5f, startY + (btnH + spacing) * 2, btnW, btnH);
+            activeUIRects.Add(menuPauseRect);
+            if (GUI.Button(menuPauseRect, "🏠  <b>VỀ MENU CHÍNH</b>", cancelBtnStyle))
+            {
+                Time.timeScale = 1f;
+                UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+            }
+        }
+    }
+
+    private void Update()
+    {
+        if (InputHelper.GetEscapeDown())
+        {
+            TowerPlacementManager pm = TowerPlacementManager.Instance;
+            if (pm != null && pm.HasSelectedTower)
+            {
+                pm.DeselectTower();
             }
             else
             {
-                if (GUI.Button(new Rect(centerX - 90, btnY, 180, 50), "🔄 <b>CHƠI LẠI</b>", gameOverBtnStyle))
+                GameManager gm = GameManager.Instance;
+                if (gm != null && !gm.IsGameEnded)
                 {
-                    gm.RestartGame();
+                    TogglePause();
                 }
             }
         }
+    }
+
+    public void TogglePause()
+    {
+        isPaused = !isPaused;
+        Time.timeScale = isPaused ? 0f : 1f;
     }
 
     private void InitStyles()
@@ -421,6 +565,30 @@ public class TowerPlacementUI : MonoBehaviour
                 richText = true
             };
             tooltipStyle.normal.textColor = new Color(0.92f, 0.96f, 1f, 1f);
+        }
+
+        if (dayNightTextStyle == null)
+        {
+            dayNightTextStyle = new GUIStyle(GUI.skin.label)
+            {
+                fontSize = 11,
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleLeft,
+                richText = true
+            };
+            dayNightTextStyle.normal.textColor = Color.white;
+        }
+
+        if (dayNightTimerStyle == null)
+        {
+            dayNightTimerStyle = new GUIStyle(GUI.skin.label)
+            {
+                fontSize = 11,
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleRight,
+                richText = true
+            };
+            dayNightTimerStyle.normal.textColor = Color.white;
         }
 
         if (endSubtitleStyle == null)
