@@ -149,11 +149,11 @@ public static class MapSetupHelper
         GameObject firePrefab = SetupProjectilePrefab("Fire", ProjectileType.Fire, 9.0f, 75f,
             "Assets/Sprites/Tiny Swords (Update 010)/Effects/Fire/Fire.png", Color.white, new Vector3(0.6f, 0.6f, 1f), "Fire_0");
 
-        // 8. Setup 3 Tower Prefabs (Cân Bằng Tháp: Tầm Bắn Xa Hơn, DPS Hợp Lý)
+        // 8. Setup 3 Tower Prefabs (Phân Biệt Màu Sắc: Xanh = Tên, Tím = Độc, Vàng = Lửa)
         List<Tower> towerPrefabs = new List<Tower>();
-        towerPrefabs.Add(SetupTowerPrefab("Tower_Arrow", "Tháp Tên", 50, 4.5f, 1.6f, 25f, arrowPrefab));
-        towerPrefabs.Add(SetupTowerPrefab("Tower_Poison", "Tháp Độc", 75, 3.8f, 1.2f, 42f, poisonPrefab));
-        towerPrefabs.Add(SetupTowerPrefab("Tower_Fire", "Tháp Lửa", 100, 3.2f, 0.85f, 75f, firePrefab));
+        towerPrefabs.Add(SetupTowerPrefab("Tower_Arrow", "Tháp Tên", 50, 4.5f, 1.6f, 25f, arrowPrefab, "Assets/Sprites/Buildings/Blue Buildings/Tower.png"));
+        towerPrefabs.Add(SetupTowerPrefab("Tower_Poison", "Tháp Độc", 75, 3.8f, 1.2f, 42f, poisonPrefab, "Assets/Sprites/Buildings/Purple Buildings/Tower.png"));
+        towerPrefabs.Add(SetupTowerPrefab("Tower_Fire", "Tháp Lửa", 100, 3.2f, 0.85f, 75f, firePrefab, "Assets/Sprites/Buildings/Yellow Buildings/Tower.png"));
 
         // 9. Setup GameManager in Scene (Máu Nhà Chính: 15)
         GameObject gmObj = GameObject.Find("GameManager");
@@ -311,10 +311,9 @@ public static class MapSetupHelper
         return prefab;
     }
 
-    private static Tower SetupTowerPrefab(string fileName, string towerName, int cost, float range, float rate, float dmg, GameObject projPrefab)
+    private static Tower SetupTowerPrefab(string fileName, string towerName, int cost, float range, float rate, float dmg, GameObject projPrefab, string spritePath = "Assets/Sprites/Buildings/Blue Buildings/Tower.png")
     {
         string path = $"Assets/Prefabs/Towers/{fileName}.prefab";
-        string spritePath = "Assets/Sprites/Buildings/Blue Buildings/Tower.png";
 
         GameObject temp = new GameObject(fileName);
         temp.transform.localScale = new Vector3(0.65f, 0.65f, 1f);
