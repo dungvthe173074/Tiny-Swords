@@ -70,11 +70,23 @@ public class Tower : MonoBehaviour
 
         if (projectilePrefab != null)
         {
-            GameObject projObj = Instantiate(projectilePrefab, spawnPos, Quaternion.identity);
-            Projectile proj = projObj.GetComponent<Projectile>();
-            if (proj != null)
+            GameObject projObj = null;
+            if (ProjectileObjectPool.Instance != null)
             {
-                proj.Seek(currentTarget, damage);
+                projObj = ProjectileObjectPool.Instance.GetProjectile(projectilePrefab, spawnPos, Quaternion.identity);
+            }
+            else
+            {
+                projObj = Instantiate(projectilePrefab, spawnPos, Quaternion.identity);
+            }
+
+            if (projObj != null)
+            {
+                Projectile proj = projObj.GetComponent<Projectile>();
+                if (proj != null)
+                {
+                    proj.Seek(currentTarget, damage);
+                }
             }
         }
         else

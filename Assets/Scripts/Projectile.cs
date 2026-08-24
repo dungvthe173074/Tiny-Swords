@@ -15,18 +15,27 @@ public class Projectile : MonoBehaviour
     public float damage = 25f;
 
     private Enemy targetEnemy;
+    private bool isDespawned = false;
 
     public void Seek(Enemy target, float dmg)
     {
         targetEnemy = target;
         damage = dmg;
+        isDespawned = false;
+    }
+
+    private void OnEnable()
+    {
+        isDespawned = false;
     }
 
     private void Update()
     {
+        if (isDespawned) return;
+
         if (targetEnemy == null || !targetEnemy.gameObject.activeInHierarchy)
         {
-            Destroy(gameObject);
+            Despawn();
             return;
         }
 
@@ -60,7 +69,9 @@ public class Projectile : MonoBehaviour
 
     private void HitTarget()
     {
-        if (targetEnemy != null)
+        if (isDespawned) return;
+
+        if (targetEnemy != null && targetEnemy.gameObject.activeInHierarchy)
         {
             targetEnemy.TakeDamage(damage);
 
@@ -70,9 +81,29 @@ public class Projectile : MonoBehaviour
             }
             else if (projectileType == ProjectileType.Fire)
             {
-                targetEnemy.ApplyBurn(30f, 3.0f); // 30 DPS Burn for 3.0s (total 90 burn damage)
+                targetEnemy.ApplyBurn(30f, 3.0f); // 30 DPS Burn for 3.0s
             }
         }
-        Destroy(gameObject);
+
+        Despawn();
+    }
+
+    /// <summary>
+    /// Return the projectile to the object pool instead of destroying it.
+    /// </summary>
+    public void Despawn()
+    {
+        if (isDespawned) return;
+        isDespawned = true;
+        targetEnemy = null;
+
+        if (ProjectileObjectPool.Instance != null)
+        {
+            ProjectileObjectPool.Instance.ReturnProjectile(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 }
