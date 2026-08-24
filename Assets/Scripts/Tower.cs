@@ -9,8 +9,12 @@ public class Tower : MonoBehaviour
 
     [Header("Combat Stats")]
     public float attackRange = 3.5f;
-    public float fireRate = 1.0f; // Attacks per second
+    public float fireRate = 1.0f;
     public float damage = 25f;
+
+    [Header("Audio")]
+    [SerializeField] private string shootSound = "BowShoot";
+    [SerializeField] private string placeSound = "TowerPlace";
 
     [Header("References")]
     public GameObject projectilePrefab;
@@ -22,24 +26,36 @@ public class Tower : MonoBehaviour
     private void Start()
     {
         InvokeRepeating(nameof(UpdateTarget), 0f, 0.2f);
+
+        PlayPlaceSound();
     }
 
     private void UpdateTarget()
     {
 #if UNITY_2023_1_OR_NEWER
-        Enemy[] enemies = FindObjectsByType<Enemy>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        Enemy[] enemies = FindObjectsByType<Enemy>(
+            FindObjectsInactive.Exclude,
+            FindObjectsSortMode.None
+        );
 #else
         Enemy[] enemies = FindObjectsOfType<Enemy>();
 #endif
+
         float shortestDistance = Mathf.Infinity;
         Enemy nearestEnemy = null;
 
         foreach (Enemy enemy in enemies)
         {
-            if (enemy == null || !enemy.gameObject.activeInHierarchy) continue;
+            if (enemy == null || !enemy.gameObject.activeInHierarchy)
+                continue;
 
-            float distanceToEnemy = Vector3.Distance(transform.position, enemy.transform.position);
-            if (distanceToEnemy < shortestDistance && distanceToEnemy <= attackRange)
+            float distanceToEnemy = Vector3.Distance(
+                transform.position,
+                enemy.transform.position
+            );
+
+            if (distanceToEnemy < shortestDistance &&
+                distanceToEnemy <= attackRange)
             {
                 shortestDistance = distanceToEnemy;
                 nearestEnemy = enemy;
@@ -51,7 +67,8 @@ public class Tower : MonoBehaviour
 
     private void Update()
     {
-        if (currentTarget == null) return;
+        if (currentTarget == null)
+            return;
 
         if (fireCountdown <= 0f)
         {
@@ -64,25 +81,38 @@ public class Tower : MonoBehaviour
 
     private void Shoot()
     {
-        if (currentTarget == null) return;
+        if (currentTarget == null)
+            return;
 
-        Vector3 spawnPos = firePoint != null ? firePoint.position : transform.position + new Vector3(0f, 0.5f, 0f);
+        Vector3 spawnPos = firePoint != null
+            ? firePoint.position
+            : transform.position + new Vector3(0f, 0.5f, 0f);
 
         if (projectilePrefab != null)
         {
             GameObject projObj = null;
+
             if (ProjectileObjectPool.Instance != null)
             {
-                projObj = ProjectileObjectPool.Instance.GetProjectile(projectilePrefab, spawnPos, Quaternion.identity);
+                projObj = ProjectileObjectPool.Instance.GetProjectile(
+                    projectilePrefab,
+                    spawnPos,
+                    Quaternion.identity
+                );
             }
             else
             {
-                projObj = Instantiate(projectilePrefab, spawnPos, Quaternion.identity);
+                projObj = Instantiate(
+                    projectilePrefab,
+                    spawnPos,
+                    Quaternion.identity
+                );
             }
 
             if (projObj != null)
             {
                 Projectile proj = projObj.GetComponent<Projectile>();
+
                 if (proj != null)
                 {
                     proj.Seek(currentTarget, damage);
@@ -93,6 +123,20 @@ public class Tower : MonoBehaviour
         {
             // Direct damage fallback
             currentTarget.TakeDamage(damage);
+        }
+
+        // 🔊 Phát sound riêng của tower
+        if (AudioManager.Instance != null && !string.IsNullOrEmpty(shootSound))
+        {
+            AudioManager.Instance.PlaySFX(shootSound);
+        }
+    }
+
+    private void PlayPlaceSound()
+    {
+        if (AudioManager.Instance != null && !string.IsNullOrEmpty(placeSound))
+        {
+            AudioManager.Instance.PlaySFX(placeSound);
         }
     }
 

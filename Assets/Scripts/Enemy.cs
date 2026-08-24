@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 [RequireComponent(typeof(EnemyMovement))]
@@ -9,6 +9,8 @@ public class Enemy : MonoBehaviour
     public float baseMoveSpeed = 3f;
     public int baseGoldReward = 15;
     public int baseCastleDamage = 1;
+
+    
 
     [Header("Current Runtime Stats")]
     public float maxHealth = 150f;
@@ -124,6 +126,7 @@ public class Enemy : MonoBehaviour
         UpdateStatusEffects();
     }
 
+    
     private void UpdateStatusEffects()
     {
         // 1. Slow Timer Countdown
@@ -262,7 +265,14 @@ public class Enemy : MonoBehaviour
     public void Die()
     {
         if (isDespawned) return;
+
         Debug.Log($"[Enemy] {gameObject.name} was defeated!");
+
+        // 🔊 Sound khi enemy chết
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX("Die");
+        }
 
         if (TowerPlacementManager.Instance != null)
         {
