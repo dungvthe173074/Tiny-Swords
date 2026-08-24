@@ -25,12 +25,20 @@ public class WaveSpawner : MonoBehaviour
 
     private void Awake()
     {
-        // Ensure Object Pool is present
+        // Ensure Object Pools are present
         if (EnemyObjectPool.Instance == null)
         {
             if (GetComponent<EnemyObjectPool>() == null)
             {
                 gameObject.AddComponent<EnemyObjectPool>();
+            }
+        }
+
+        if (ProjectileObjectPool.Instance == null)
+        {
+            if (GetComponent<ProjectileObjectPool>() == null)
+            {
+                gameObject.AddComponent<ProjectileObjectPool>();
             }
         }
     }
