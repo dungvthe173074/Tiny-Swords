@@ -21,7 +21,7 @@ public static class MapSetupHelper
         };
     }
 
-    [MenuItem("Tools/Rebuild Map 1 Bridges & Waypoints")]
+    [MenuItem("Tools/Rebuild Map 1 (Setup Balance & Prefabs)")]
     [MenuItem("Tools/Setup Boss & Final Wave (Boss Orc)")]
     public static void RebuildMap()
     {
@@ -73,102 +73,28 @@ public static class MapSetupHelper
             }
         }
 
-        // 3. Load cleaned sub-sprites for Bridges
-        Object[] subAssets = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprites/Tiny Swords (Update 010)/Terrain/Bridge/Bridge_All.png");
-        Sprite hSprite = null;
-        Sprite vSprite = null;
-        foreach (var obj in subAssets)
-        {
-            if (obj is Sprite s)
-            {
-                if (s.name == "Bridge_All_1") hSprite = s;
-                if (s.name == "Bridge_All_0") vSprite = s;
-            }
-        }
-
-        // 4. Find or create Bridges parent
-        GameObject bridgesParent = GameObject.Find("Bridges");
-        if (bridgesParent == null)
-        {
-            bridgesParent = new GameObject("Bridges");
-            Undo.RegisterCreatedObjectUndo(bridgesParent, "Create Bridges Parent");
-        }
-
-        for (int i = bridgesParent.transform.childCount - 1; i >= 0; i--)
-        {
-            GameObject.DestroyImmediate(bridgesParent.transform.GetChild(i).gameObject);
-        }
-
-        // Create SEAMLESS bridge network on the far-left grass field:
-        // - Level 1 (Bottom Bridge): y = 3.5f, spanning from x = -16.0 to -9.5
-        float[] h1X = new float[] { -16.0f, -14.5f, -13.0f, -11.5f, -10.0f, -9.5f };
-        for (int i = 0; i < h1X.Length; i++)
-        {
-            CreateBridgePiece(bridgesParent.transform, $"Bridge_H1_{i + 1}", new Vector3(h1X[i], 3.5f, 0f), hSprite, 1);
-        }
-
-        // - Connector 1 (Vertical Bridge 1): x = -9.5f, seamless overlap from y = 3.5 to y = 6.5
-        CreateBridgePiece(bridgesParent.transform, "Bridge_V1_1", new Vector3(-9.5f, 4.3f, 0f), vSprite != null ? vSprite : hSprite, 1);
-        CreateBridgePiece(bridgesParent.transform, "Bridge_V1_2", new Vector3(-9.5f, 5.7f, 0f), vSprite != null ? vSprite : hSprite, 1);
-
-        // - Level 2 (Middle Bridge): y = 6.5f, spanning from x = -9.5 to -5.5
-        float[] h2X = new float[] { -9.5f, -8.0f, -6.5f, -5.5f };
-        for (int i = 0; i < h2X.Length; i++)
-        {
-            CreateBridgePiece(bridgesParent.transform, $"Bridge_H2_{i + 1}", new Vector3(h2X[i], 6.5f, 0f), hSprite, 1);
-        }
-
-        // - Connector 2 (Vertical Bridge 2): x = -5.5f, seamless overlap from y = 6.5 to y = 9.5
-        CreateBridgePiece(bridgesParent.transform, "Bridge_V2_1", new Vector3(-5.5f, 7.3f, 0f), vSprite != null ? vSprite : hSprite, 1);
-        CreateBridgePiece(bridgesParent.transform, "Bridge_V2_2", new Vector3(-5.5f, 8.7f, 0f), vSprite != null ? vSprite : hSprite, 1);
-
-        // - Level 3 (Top Bridge): y = 9.5f, spanning from x = -5.5 to 1.0 (exits camera top-right)
-        float[] h3X = new float[] { -5.5f, -4.0f, -2.5f, -1.0f, 0.5f, 1.0f };
-        for (int i = 0; i < h3X.Length; i++)
-        {
-            CreateBridgePiece(bridgesParent.transform, $"Bridge_H3_{i + 1}", new Vector3(h3X[i], 9.5f, 0f), hSprite, 1);
-        }
-
-        // 5. Find or create Waypoints parent
-        GameObject waypointsParent = GameObject.Find("Waypoints");
-        if (waypointsParent == null)
-        {
-            waypointsParent = new GameObject("Waypoints");
-            Undo.RegisterCreatedObjectUndo(waypointsParent, "Create Waypoints Parent");
-        }
-
-        for (int i = waypointsParent.transform.childCount - 1; i >= 0; i--)
-        {
-            GameObject.DestroyImmediate(waypointsParent.transform.GetChild(i).gameObject);
-        }
-
-        Vector3[] wpPositions = new Vector3[]
-        {
-            new Vector3(-16.0f, 3.85f, 0f), // 0: Start
-            new Vector3(-9.5f, 3.85f, 0f),  // 1: Turn 1
-            new Vector3(-9.5f, 6.85f, 0f),  // 2: Turn 2
-            new Vector3(-5.5f, 6.85f, 0f),  // 3: Turn 3
-            new Vector3(-5.5f, 9.85f, 0f),  // 4: Turn 4
-            new Vector3(1.0f, 9.85f, 0f)    // 5: Goal (Castle)
-        };
-
-        Transform[] wpTransforms = new Transform[wpPositions.Length];
-        for (int i = 0; i < wpPositions.Length; i++)
-        {
-            GameObject wp = new GameObject($"Waypoint ({i})");
-            wp.transform.SetParent(waypointsParent.transform);
-            wp.transform.localPosition = wpPositions[i];
-            wpTransforms[i] = wp.transform;
-        }
-
-        // 6. Update WaveSpawner with waypoints and balanced waves
+        // 3. Update WaveSpawner with waypoints and balanced waves
         GameObject waveSpawnerObj = GameObject.Find("WaveSpawner");
         if (waveSpawnerObj != null)
         {
             WaveSpawner waveSpawner = waveSpawnerObj.GetComponent<WaveSpawner>();
             if (waveSpawner != null)
             {
-                waveSpawner.waypoints = wpTransforms;
+                // If waypoints are not yet assigned, automatically link from existing "Waypoints" in Scene if available
+                if (waveSpawner.waypoints == null || waveSpawner.waypoints.Length == 0)
+                {
+                    GameObject waypointsParent = GameObject.Find("Waypoints");
+                    if (waypointsParent != null && waypointsParent.transform.childCount > 0)
+                    {
+                        Transform[] wpTransforms = new Transform[waypointsParent.transform.childCount];
+                        for (int i = 0; i < waypointsParent.transform.childCount; i++)
+                        {
+                            wpTransforms[i] = waypointsParent.transform.GetChild(i);
+                        }
+                        waveSpawner.waypoints = wpTransforms;
+                    }
+                }
+
                 waveSpawner.timeBetweenWaves = 8f;
 
                 GameObject e1 = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Enemy1.prefab");
@@ -413,16 +339,6 @@ public static class MapSetupHelper
         GameObject prefab = PrefabUtility.SaveAsPrefabAsset(temp, path);
         GameObject.DestroyImmediate(temp);
         return prefab.GetComponent<Tower>();
-    }
-
-    private static void CreateBridgePiece(Transform parent, string name, Vector3 pos, Sprite sprite, int sortingOrder)
-    {
-        GameObject piece = new GameObject(name);
-        piece.transform.SetParent(parent);
-        piece.transform.localPosition = pos;
-        SpriteRenderer sr = piece.AddComponent<SpriteRenderer>();
-        sr.sprite = sprite;
-        sr.sortingOrder = sortingOrder;
     }
 
     private static Sprite GetOrCreateGridBorderSprite()
