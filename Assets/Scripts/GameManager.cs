@@ -7,8 +7,8 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     [Header("Base / Castle Health (Máu Nhà Chính)")]
-    public int maxBaseHealth = 10;
-    public int currentBaseHealth = 10;
+    public int maxBaseHealth = 15;
+    public int currentBaseHealth = 15;
 
     public bool IsGameOver { get; private set; } = false;
     public bool IsVictory { get; private set; } = false;

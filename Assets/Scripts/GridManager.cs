@@ -15,6 +15,10 @@ public class GridManager : MonoBehaviour
     public GameObject gridTilePrefab;
     public Sprite tileBorderSprite;
 
+    [Header("Dynamic Obstacle Detection")]
+    public Transform bridgesParent;
+    public Transform castleTransform;
+
     private readonly List<GridTile> allTiles = new List<GridTile>();
 
     private void Awake()
@@ -91,7 +95,7 @@ public class GridManager : MonoBehaviour
                     sr.sortingOrder = 0;
 
                     BoxCollider2D col = tileObj.AddComponent<BoxCollider2D>();
-                    col.size = new Vector2(cellSize * 0.95f, cellSize * 0.95f);
+                    col.size = new Vector2(cellSize, cellSize);
                     col.isTrigger = true;
 
                     tileObj.AddComponent<GridTile>();
@@ -104,9 +108,6 @@ public class GridManager : MonoBehaviour
                 if (tile != null)
                 {
                     tile.gridCoord = new Vector2Int(x, y);
-                    bool isBridge = IsPositionOnBridge(worldPos);
-                    bool isInsideCamera = IsTileFullyInsideCamera(worldPos);
-                    tile.SetTileState(!isBridge && isInsideCamera);
 
                     SpriteRenderer sr = tileObj.GetComponent<SpriteRenderer>();
                     if (sr != null && sr.sprite == null)
@@ -119,18 +120,51 @@ public class GridManager : MonoBehaviour
                 }
             }
         }
+
         UpdateTileBuildableStates();
         RefreshAllTileVisuals();
     }
 
     public void UpdateTileBuildableStates()
     {
+        // 1. Collect all obstacle bounding boxes dynamically from the scene
+        List<Bounds> obstacleBoundsList = GetDynamicObstacleBounds();
+
+        // 2. Collect existing placed towers in the scene
+#if UNITY_2023_1_OR_NEWER
+        Tower[] existingTowers = FindObjectsByType<Tower>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+#else
+        Tower[] existingTowers = FindObjectsOfType<Tower>();
+#endif
+
         foreach (var tile in allTiles)
         {
             if (tile == null) continue;
-            bool isBridge = IsPositionOnBridge(tile.transform.position);
-            bool isInsideCamera = IsTileFullyInsideCamera(tile.transform.position);
-            tile.SetTileState(!isBridge && isInsideCamera);
+            Vector3 tilePos = tile.transform.position;
+
+            bool isObstacle = IsPositionOverlappingObstacles(tilePos, obstacleBoundsList);
+            bool isInsideCamera = IsTileFullyInsideCamera(tilePos);
+            tile.SetTileState(!isObstacle && isInsideCamera);
+
+            // Dynamically check if any tower already occupies this tile
+            bool hasTower = false;
+            Tower occupyingTower = null;
+            if (existingTowers != null)
+            {
+                foreach (var tower in existingTowers)
+                {
+                    if (tower == null) continue;
+                    if (Vector2.Distance(tilePos, tower.transform.position) < cellSize * 0.55f)
+                    {
+                        hasTower = true;
+                        occupyingTower = tower;
+                        break;
+                    }
+                }
+            }
+
+            tile.isOccupied = hasTower;
+            tile.placedTower = occupyingTower;
         }
     }
 
@@ -173,26 +207,138 @@ public class GridManager : MonoBehaviour
         return isInside;
     }
 
-    private bool IsPositionOnBridge(Vector3 pos)
+    /// <summary>
+    /// Dynamically discovers all bridges, castle, and obstacle bounding boxes in the scene.
+    /// No hardcoded coordinates required!
+    /// </summary>
+    public List<Bounds> GetDynamicObstacleBounds()
     {
-        //// Bottom horizontal bridge: y ≈ 3.5, x from -16.5 to -9.0
-        //if (Mathf.Abs(pos.y - 3.5f) < 0.70f && pos.x <= -8.8f) return true;
+        List<Bounds> boundsList = new List<Bounds>();
 
-        //// Vertical bridge 1: x ≈ -9.5, y from 3.0 to 7.0
-        //if (Mathf.Abs(pos.x - (-9.5f)) < 0.70f && pos.y >= 3.0f && pos.y <= 7.0f) return true;
+        // 1. Bridges parent GameObject (and all its children)
+        if (bridgesParent == null)
+        {
+            GameObject bridgesObj = GameObject.Find("Bridges");
+            if (bridgesObj != null) bridgesParent = bridgesObj.transform;
+        }
 
-        //// Middle horizontal bridge: y ≈ 6.5, x from -10.0 to -5.0
-        //if (Mathf.Abs(pos.y - 6.5f) < 0.70f && pos.x >= -10.0f && pos.x <= -5.0f) return true;
+        if (bridgesParent != null)
+        {
+            SpriteRenderer[] bridgeRenderers = bridgesParent.GetComponentsInChildren<SpriteRenderer>();
+            foreach (var sr in bridgeRenderers)
+            {
+                if (sr != null && sr.enabled && sr.gameObject.activeInHierarchy)
+                {
+                    boundsList.Add(sr.bounds);
+                }
+            }
 
-        //// Vertical bridge 2: x ≈ -5.5, y from 6.0 to 10.0
-        //if (Mathf.Abs(pos.x - (-5.5f)) < 0.70f && pos.y >= 6.0f && pos.y <= 10.0f) return true;
+            Collider2D[] bridgeColliders = bridgesParent.GetComponentsInChildren<Collider2D>();
+            foreach (var col in bridgeColliders)
+            {
+                if (col != null && col.enabled && col.gameObject.activeInHierarchy)
+                {
+                    boundsList.Add(col.bounds);
+                }
+            }
+        }
 
-        //// Top horizontal bridge: y ≈ 9.5, x from -6.0 to 1.5
-        //if (Mathf.Abs(pos.y - 9.5f) < 0.70f && pos.x >= -6.0f) return true;
+        // 2. Scan all objects in scene named "Bridge*" or tagged "Bridge" in case they are outside Bridges parent
+#if UNITY_2023_1_OR_NEWER
+        SpriteRenderer[] allRenderers = FindObjectsByType<SpriteRenderer>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+#else
+        SpriteRenderer[] allRenderers = FindObjectsOfType<SpriteRenderer>();
+#endif
+        foreach (var sr in allRenderers)
+        {
+            if (sr == null || !sr.enabled || !sr.gameObject.activeInHierarchy) continue;
+            string objName = sr.gameObject.name.ToLower();
+            if (objName.Contains("bridge") || sr.gameObject.CompareTag("Bridge") || objName.Contains("obstacle"))
+            {
+                if (!boundsList.Contains(sr.bounds))
+                {
+                    boundsList.Add(sr.bounds);
+                }
+            }
+        }
+
+        // 3. Castle bounds
+        if (castleTransform == null)
+        {
+            GameObject castleObj = GameObject.Find("MainCastle");
+            if (castleObj != null) castleTransform = castleObj.transform;
+        }
+        if (castleTransform != null)
+        {
+            SpriteRenderer castleSr = castleTransform.GetComponent<SpriteRenderer>();
+            if (castleSr != null) boundsList.Add(castleSr.bounds);
+
+            Collider2D castleCol = castleTransform.GetComponent<Collider2D>();
+            if (castleCol != null) boundsList.Add(castleCol.bounds);
+        }
+
+        return boundsList;
+    }
+
+    /// <summary>
+    /// Exact mathematical lookup for the tile at any world coordinate.
+    /// Immune to overlapping sprites or tall tower colliders blocking raycasts.
+    /// </summary>
+    public GridTile GetTileAtWorldPos(Vector3 worldPos)
+    {
+        int col = Mathf.FloorToInt((worldPos.x - origin.x) / cellSize);
+        int row = Mathf.FloorToInt((worldPos.y - origin.y) / cellSize);
+
+        if (col < 0 || col >= columns || row < 0 || row >= rows) return null;
+
+        for (int i = 0; i < allTiles.Count; i++)
+        {
+            if (allTiles[i] != null && allTiles[i].gridCoord.x == col && allTiles[i].gridCoord.y == row)
+            {
+                return allTiles[i];
+            }
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Checks if a tile position overlaps with any dynamic obstacle bounds or physics obstacles.
+    /// </summary>
+    public bool IsPositionOverlappingObstacles(Vector3 pos, List<Bounds> obstacleBounds)
+    {
+        // 70% of cell footprint to accurately detect intersections without false border touching
+        float checkSize = cellSize * 0.70f;
+        Bounds tileBounds = new Bounds(pos, new Vector3(checkSize, checkSize, 10f));
+
+        if (obstacleBounds != null)
+        {
+            foreach (var b in obstacleBounds)
+            {
+                if (b.Intersects(tileBounds))
+                {
+                    return true;
+                }
+            }
+        }
+
+        // Physics 2D overlap check for static obstacle colliders (bridges, castle)
+        Collider2D hit = Physics2D.OverlapBox(pos, new Vector2(checkSize, checkSize), 0f);
+        if (hit != null && hit.GetComponent<GridTile>() == null && hit.GetComponent<Tower>() == null)
+        {
+            string hitName = hit.gameObject.name.ToLower();
+            if (hitName.Contains("bridge") || hitName.Contains("castle") || hitName.Contains("water") || hitName.Contains("obstacle"))
+            {
+                return true;
+            }
+        }
 
         return false;
     }
 
+    /// <summary>
+    /// Creates a crisp 2-pixel border texture with a subtle inner tint so all 4 edges
+    /// are prominently visible on any background.
+    /// </summary>
     private Sprite CreateTileBorderSprite()
     {
         int size = 64;
@@ -201,14 +347,14 @@ public class GridManager : MonoBehaviour
         Color[] pixels = new Color[size * size];
 
         Color borderColor = Color.white;
-        Color innerColor = Color.clear;
+        Color innerColor = new Color(1f, 1f, 1f, 0.08f); // Soft 8% inner fill for great tile clarity
+        int borderWidth = 2; // 2-pixel crisp border ensures all 4 edges are bold and sharp
 
         for (int y = 0; y < size; y++)
         {
             for (int x = 0; x < size; x++)
             {
-                // Thin 1-pixel border
-                if (x == 0 || x == size - 1 || y == 0 || y == size - 1)
+                if (x < borderWidth || x >= size - borderWidth || y < borderWidth || y >= size - borderWidth)
                 {
                     pixels[y * size + x] = borderColor;
                 }

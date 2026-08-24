@@ -11,10 +11,10 @@ public class GridTile : MonoBehaviour
 
     [Header("Visual Colors")]
     public Color normalColor = new Color(1f, 1f, 1f, 0.0f); // Hidden when idle
-    public Color placementModeColor = new Color(1f, 1f, 1f, 0.38f); // Soft, thin, elegant white grid
-    public Color placementBlockedColor = new Color(1f, 1f, 1f, 0.10f); // Very faint on bridges/offscreen
-    public Color hoverBuildableColor = new Color(0.2f, 1.0f, 0.4f, 0.70f); // Soft green hover
-    public Color hoverUnbuildableColor = new Color(1.0f, 0.2f, 0.2f, 0.70f); // Soft red hover
+    public Color placementModeColor = new Color(1f, 1f, 1f, 0.35f); // Soft, elegant white grid
+    public Color placementBlockedColor = new Color(1f, 1f, 1f, 0.08f); // Very faint on bridges/offscreen
+    public Color hoverBuildableColor = new Color(0.15f, 1.0f, 0.35f, 0.90f); // Vivid green hover
+    public Color hoverUnbuildableColor = new Color(1.0f, 0.20f, 0.20f, 0.90f); // Vivid red hover
 
     private SpriteRenderer spriteRenderer;
     private BoxCollider2D boxCollider;
@@ -67,19 +67,23 @@ public class GridTile : MonoBehaviour
         {
             if (isHovered)
             {
-                spriteRenderer.color = (isBuildable && !isOccupied && TowerPlacementManager.Instance.CanAffordSelectedTower) 
-                    ? hoverBuildableColor 
-                    : hoverUnbuildableColor;
+                // CRITICAL: Elevate sortingOrder to 10 on hover so all 4 border edges
+                // render above all neighboring tiles and terrain sprites without any clipping
+                spriteRenderer.sortingOrder = 10;
+
+                bool canBuild = isBuildable && !isOccupied && placedTower == null && TowerPlacementManager.Instance.CanAffordSelectedTower;
+                spriteRenderer.color = canBuild ? hoverBuildableColor : hoverUnbuildableColor;
             }
             else
             {
-                // Full grid is displayed across the whole screen!
-                spriteRenderer.color = (isBuildable && !isOccupied) ? placementModeColor : placementBlockedColor;
+                spriteRenderer.sortingOrder = 1;
+                spriteRenderer.color = (isBuildable && !isOccupied && placedTower == null) ? placementModeColor : placementBlockedColor;
             }
         }
         else
         {
             // Idle mode (no tower selected): Grid is completely hidden / clear
+            spriteRenderer.sortingOrder = 0;
             spriteRenderer.color = normalColor;
         }
     }

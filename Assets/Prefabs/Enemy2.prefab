@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1141000000000003}
   - component: {fileID: 1141000000000004}
   m_Layer: 0
-  m_Name: Enemy 2
+  m_Name: Enemy2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -101,7 +101,6 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1100000000000002}
-  serializedVersion: 0
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6d9bfdad6a910134ea13ef8b3412bb6a, type: 3}
@@ -114,11 +113,22 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1100000000000002}
-  serializedVersion: 0
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  maxHealth: 90
-  moveSpeed: 5
+  baseMaxHealth: 280
+  baseMoveSpeed: 2.8
+  baseGoldReward: 18
+  baseCastleDamage: 1
+  maxHealth: 280
+  moveSpeed: 2.8
+  goldReward: 18
+  castleDamage: 1
+  isSlowed: 0
+  slowTimer: 0
+  slowMultiplier: 1
+  isBurning: 0
+  burnTimer: 0
+  burnDps: 0
