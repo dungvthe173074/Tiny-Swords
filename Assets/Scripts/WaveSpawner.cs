@@ -91,8 +91,24 @@ public class WaveSpawner : MonoBehaviour
     {
         if (enemyPrefab == null)
         {
+            string fallbackPath = $"Assets/Prefabs/Enemy{currentWaveIndex + 1}.prefab";
+#if UNITY_EDITOR
+            enemyPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(fallbackPath);
+            if (enemyPrefab == null && currentWaveIndex == 4)
+            {
+                enemyPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Boss_Orc.prefab");
+            }
+#endif
+        }
+
+        if (enemyPrefab == null)
+        {
             Debug.LogError("[WaveSpawner] Enemy Prefab is missing for current wave!");
             activeEnemiesInWave--;
+            if (activeEnemiesInWave <= 0)
+            {
+                OnEnemyDespawned(null);
+            }
             return;
         }
 

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2121000000000001}
   - component: {fileID: 1141000000000001}
   - component: {fileID: 1141000000000002}
+  - component: {fileID: 1141000000000008}
   m_Layer: 0
   m_Name: Enemy1
   m_TagString: Untagged
@@ -83,7 +84,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7384290322352760091, guid: 5a1a10cf954108c4ba1bc46d71f02222, type: 3}
+  m_Sprite: {fileID: -432731726981308715, guid: 49ef1ca7e4f3b8241a4d21aefd2a5044, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -132,3 +133,23 @@ MonoBehaviour:
   isBurning: 0
   burnTimer: 0
   burnDps: 0
+--- !u!114 &1141000000000008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1100000000000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8f6e466e9646f74ba21e73414765b34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAnimation
+  runSprites:
+  - {fileID: -432731726981308715, guid: 49ef1ca7e4f3b8241a4d21aefd2a5044, type: 3}
+  - {fileID: 8551124423323264409, guid: 49ef1ca7e4f3b8241a4d21aefd2a5044, type: 3}
+  - {fileID: -8600065048725663906, guid: 49ef1ca7e4f3b8241a4d21aefd2a5044, type: 3}
+  - {fileID: 3241423924572654580, guid: 49ef1ca7e4f3b8241a4d21aefd2a5044, type: 3}
+  - {fileID: -5828329696384875631, guid: 49ef1ca7e4f3b8241a4d21aefd2a5044, type: 3}
+  - {fileID: 2022560608615539102, guid: 49ef1ca7e4f3b8241a4d21aefd2a5044, type: 3}
+  animFps: 9

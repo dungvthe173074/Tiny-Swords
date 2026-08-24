@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1100000000000003
+--- !u!1 &1100000000000001
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,10 +8,11 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4100000000000003}
-  - component: {fileID: 2121000000000003}
+  - component: {fileID: 4100000000000001}
+  - component: {fileID: 2121000000000001}
   - component: {fileID: 1141000000000005}
   - component: {fileID: 1141000000000006}
+  - component: {fileID: 1141000000000008}
   m_Layer: 0
   m_Name: Enemy3
   m_TagString: Untagged
@@ -19,13 +20,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4100000000000003
+--- !u!4 &4100000000000001
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1100000000000003}
+  m_GameObject: {fileID: 1100000000000001}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -34,14 +35,15 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &2121000000000003
+--- !u!212 &2121000000000001
 SpriteRenderer:
   serializedVersion: 3
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1100000000000003}
+  m_GameObject: {fileID: 1100000000000001}
+  serializedVersion: 2
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -83,7 +85,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -594197781322936934, guid: 8cdf88b4e90937f49a319916678424f7, type: 3}
+  m_Sprite: {fileID: -8580444238127179786, guid: 6fb21291cf9ee1449961eb7dad77e485, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -100,7 +102,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1100000000000003}
+  m_GameObject: {fileID: 1100000000000001}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6d9bfdad6a910134ea13ef8b3412bb6a, type: 3}
@@ -112,7 +114,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1100000000000003}
+  m_GameObject: {fileID: 1100000000000001}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6, type: 3}
@@ -132,3 +134,23 @@ MonoBehaviour:
   isBurning: 0
   burnTimer: 0
   burnDps: 0
+--- !u!114 &1141000000000008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1100000000000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8f6e466e9646f74ba21e73414765b34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAnimation
+  runSprites:
+  - {fileID: -8580444238127179786, guid: 6fb21291cf9ee1449961eb7dad77e485, type: 3}
+  - {fileID: 828278362111410375, guid: 6fb21291cf9ee1449961eb7dad77e485, type: 3}
+  - {fileID: -4153816518293905039, guid: 6fb21291cf9ee1449961eb7dad77e485, type: 3}
+  - {fileID: 1456675321045083290, guid: 6fb21291cf9ee1449961eb7dad77e485, type: 3}
+  - {fileID: -3942745417268178275, guid: 6fb21291cf9ee1449961eb7dad77e485, type: 3}
+  - {fileID: -1776823346852784203, guid: 6fb21291cf9ee1449961eb7dad77e485, type: 3}
+  animFps: 9

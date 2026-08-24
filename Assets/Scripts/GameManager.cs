@@ -49,6 +49,7 @@ public class GameManager : MonoBehaviour
     {
         if (IsGameEnded) return;
         IsVictory = true;
+        Time.timeScale = 0f;
         Debug.Log("[GameManager] 🏆 VICTORY! Bạn đã bảo vệ thành công Nhà Chính và vượt qua tất cả các đợt quái!");
         OnVictory?.Invoke();
     }
@@ -57,6 +58,7 @@ public class GameManager : MonoBehaviour
     {
         if (IsGameEnded) return;
         IsGameOver = true;
+        Time.timeScale = 0f;
         Debug.Log("[GameManager] 💀 GAME OVER! Nhà chính đã bị phá hủy.");
         OnGameOver?.Invoke();
     }

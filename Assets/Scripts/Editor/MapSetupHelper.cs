@@ -120,7 +120,7 @@ public static class MapSetupHelper
             }
         }
 
-        // 6.1 Update Enemy Prefab Stats (Giảm 1/3 Máu Quái Thường & Tăng 3x Máu Boss)
+        // 6.1 Update Enemy Prefab Stats & Run Animations (Phe Đỏ & Run Animation)
         UpdateEnemyPrefab("Assets/Prefabs/Enemy1.prefab", 380f, 2.2f, 16);
         UpdateEnemyPrefab("Assets/Prefabs/Enemy2.prefab", 280f, 2.8f, 18);
         UpdateEnemyPrefab("Assets/Prefabs/Enemy3.prefab", 550f, 2.3f, 22);
@@ -128,6 +128,15 @@ public static class MapSetupHelper
         if (File.Exists("Assets/Prefabs/Enemy.prefab"))
         {
             UpdateEnemyPrefab("Assets/Prefabs/Enemy.prefab", 380f, 2.2f, 16);
+        }
+
+        SetupEnemyAnimation("Assets/Prefabs/Enemy1.prefab", "Assets/Sprites/Units/Red Units/Warrior/Warrior_Run.png", 9f);
+        SetupEnemyAnimation("Assets/Prefabs/Enemy2.prefab", "Assets/Sprites/Units/Red Units/Archer/Archer_Run.png", 8f);
+        SetupEnemyAnimation("Assets/Prefabs/Enemy3.prefab", "Assets/Sprites/Units/Red Units/Lancer/Lancer_Run.png", 9f);
+        SetupEnemyAnimation("Assets/Prefabs/Enemy4.prefab", "Assets/Sprites/Units/Red Units/Monk/Run.png", 7f);
+        if (File.Exists("Assets/Prefabs/Enemy.prefab"))
+        {
+            SetupEnemyAnimation("Assets/Prefabs/Enemy.prefab", "Assets/Sprites/Units/Red Units/Warrior/Warrior_Run.png", 9f);
         }
 
         // 7. Setup Projectile Prefabs: Arrow, Poison, Fire (Tăng tốc độ bay & sát thương cân bằng)
@@ -500,6 +509,32 @@ public static class MapSetupHelper
                 enemy.castleDamage = 1;
                 EditorUtility.SetDirty(prefab);
             }
+        }
+    }
+
+    private static void SetupEnemyAnimation(string prefabPath, string runSpritePath, float fps = 9f)
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+        if (prefab != null)
+        {
+            EnemyAnimation anim = prefab.GetComponent<EnemyAnimation>();
+            if (anim == null) anim = prefab.AddComponent<EnemyAnimation>();
+
+            anim.animFps = fps;
+
+            Object[] subs = AssetDatabase.LoadAllAssetsAtPath(runSpritePath);
+            List<Sprite> sprites = new List<Sprite>();
+            foreach (var o in subs)
+            {
+                if (o is Sprite s)
+                {
+                    sprites.Add(s);
+                }
+            }
+            sprites.Sort((a, b) => string.Compare(a.name, b.name, System.StringComparison.Ordinal));
+            anim.runSprites = sprites.ToArray();
+
+            EditorUtility.SetDirty(prefab);
         }
     }
 }
