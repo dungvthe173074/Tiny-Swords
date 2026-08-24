@@ -119,14 +119,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  baseMaxHealth: 2200
+  baseMaxHealth: 10000
   baseMoveSpeed: 0.85
-  baseGoldReward: 200
+  baseGoldReward: 500
   baseCastleDamage: 15
-  maxHealth: 2200
+  maxHealth: 10000
   moveSpeed: 0.85
-  goldReward: 200
+  goldReward: 500
   castleDamage: 15
+  isSlowed: 0
+  slowTimer: 0
+  slowMultiplier: 1
+  isBurning: 0
+  burnTimer: 0
+  burnDps: 0
 --- !u!114 &5581325009962363124
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -141,6 +147,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BossOrc
   bossName: "\u0110\u1EA0I T\u01AF\u1EDANG ORC (TR\xD9M CU\u1ED0I)"
   isBoss: 1
+  idleSprites:
+  - {fileID: 3799508404887519019, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
+  - {fileID: -9003958548615516068, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
+  - {fileID: -4848521796537363852, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
+  - {fileID: -4561745191760880128, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
+  - {fileID: 2090174075836721236, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
+  - {fileID: -104981853600970874, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
   walkSprites:
   - {fileID: 2897101806617490989, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
   - {fileID: -5387681273772109387, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
@@ -150,13 +163,6 @@ MonoBehaviour:
   - {fileID: 1775836896072057239, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
   - {fileID: 8509750463533020753, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
   - {fileID: 3726779511297121340, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
-  idleSprites:
-  - {fileID: 3799508404887519019, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
-  - {fileID: -9003958548615516068, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
-  - {fileID: -4848521796537363852, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
-  - {fileID: -4561745191760880128, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
-  - {fileID: 2090174075836721236, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
-  - {fileID: -104981853600970874, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
   attackSprites:
   - {fileID: 1292906774393753324, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
   - {fileID: 2508835607153844694, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
@@ -164,11 +170,22 @@ MonoBehaviour:
   - {fileID: -255199864349076070, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
   - {fileID: -3969097664858752442, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
   - {fileID: 6223794719511703634, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
-  deathSprites:
   - {fileID: -8189613066579858216, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
   - {fileID: -6231698651707420963, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
   - {fileID: -7930362091750605017, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
   - {fileID: 7151978387250360421, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
+  - {fileID: 3241123462135466627, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
+  - {fileID: -4833688072403574906, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
+  - {fileID: -337217167416535715, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
+  hurtSprites:
+  - {fileID: -1420869352781472879, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
+  - {fileID: -8537654572011523767, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
+  - {fileID: 4201440855533994549, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
+  - {fileID: -229307623453473662, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
+  deathSprites:
+  - {fileID: 6038443146981578319, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
+  - {fileID: -6751517663992241325, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
+  - {fileID: 1925807571168068822, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
+  - {fileID: 3343983511578409606, guid: efd4cb5ac7f4e7549b1d973697c5714d, type: 3}
   animFps: 9
-  bossAuraColor: {r: 1, g: 0.4, b: 0.2, a: 1}
   isEnraged: 0

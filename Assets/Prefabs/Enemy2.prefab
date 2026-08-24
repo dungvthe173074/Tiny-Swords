@@ -118,11 +118,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  baseMaxHealth: 75
-  baseMoveSpeed: 3
+  baseMaxHealth: 280
+  baseMoveSpeed: 2.8
   baseGoldReward: 18
   baseCastleDamage: 1
-  maxHealth: 75
-  moveSpeed: 3
+  maxHealth: 280
+  moveSpeed: 2.8
   goldReward: 18
   castleDamage: 1
+  isSlowed: 0
+  slowTimer: 0
+  slowMultiplier: 1
+  isBurning: 0
+  burnTimer: 0
+  burnDps: 0
