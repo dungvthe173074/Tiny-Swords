@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,6 +13,8 @@ public enum MenuState
 
 public class MainMenuManager : MonoBehaviour
 {
+    public event Action<float> OnBGMVolumeChanged;
+    public event Action<float> OnSFXVolumeChanged;
     public static MainMenuManager Instance { get; private set; }
 
     [Header("Current View")]
@@ -379,10 +382,12 @@ public class MainMenuManager : MonoBehaviour
         // Music Volume
         GUI.Label(new Rect(optX, optY, optW, 22f), $"🎵  <b>Nhạc Nền (BGM):</b>  {(int)(bgmVolume * 100)}%", bodyStyle);
         bgmVolume = GUI.HorizontalSlider(new Rect(optX, optY + 24f, optW, 20f), bgmVolume, 0f, 1f);
+        OnBGMVolumeChanged?.Invoke(bgmVolume);
 
         // SFX Volume
         GUI.Label(new Rect(optX, optY + 52f, optW, 22f), $"🔊  <b>Hiệu Ứng Âm Thanh (SFX):</b>  {(int)(sfxVolume * 100)}%", bodyStyle);
         sfxVolume = GUI.HorizontalSlider(new Rect(optX, optY + 76f, optW, 20f), sfxVolume, 0f, 1f);
+        OnSFXVolumeChanged?.Invoke(sfxVolume);
 
         // Fullscreen Toggle
         bool newFullscreen = GUI.Toggle(new Rect(optX, optY + 112f, optW, 24f), isFullscreen, "  🖥️  <b>Chế Độ Toàn Màn Hình (Fullscreen)</b>", bodyStyle);

@@ -32,6 +32,11 @@ public class AudioManager : MonoBehaviour
     private void Start()
     {
         PlayMusic("Theme");
+        MusicVolume(MainMenuManager.Instance.bgmVolume);
+        SFXVolume(MainMenuManager.Instance.sfxVolume);
+
+        MainMenuManager.Instance.OnBGMVolumeChanged += MusicVolume;
+        MainMenuManager.Instance.OnSFXVolumeChanged += SFXVolume;
     }
 
     public void PlayMusic(string name)
@@ -86,10 +91,5 @@ public class AudioManager : MonoBehaviour
     public void SFXVolume(float volume)
     {
         sfxSource.volume = volume;
-    }
-    private void Update()
-    {
-        MusicVolume(MainMenuManager.Instance.bgmVolume);
-        SFXVolume(MainMenuManager.Instance.sfxVolume);
     }
 }
