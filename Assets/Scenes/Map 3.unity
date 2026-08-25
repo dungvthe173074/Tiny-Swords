@@ -602,19 +602,19 @@ MonoBehaviour:
   waves:
   - waveName: "Wave 1 - \u0110\u1ED9i Ti\xEAn Phong (Warriors)"
     enemyPrefab: {fileID: 1100000000000001, guid: f3a2b3c4d5e6f7a8b9c0d1e2f3a4b5d3, type: 3}
-    enemyCount: 15
+    enemyCount: 20
     spawnInterval: 1.8
   - waveName: "Wave 2 - Cung Th\u1EE7 T\u1EADp K\xEDch (Archers)"
     enemyPrefab: {fileID: 1100000000000001, guid: f4a2b3c4d5e6f7a8b9c0d1e2f3a4b5d4, type: 3}
-    enemyCount: 15
+    enemyCount: 20
     spawnInterval: 1.6
   - waveName: "Wave 3 - K\u1EF5 S\u0129 Thi\u1EBFt Gi\xE1p (Lancers)"
     enemyPrefab: {fileID: 1100000000000001, guid: f5a2b3c4d5e6f7a8b9c0d1e2f3a4b5d5, type: 3}
-    enemyCount: 15
+    enemyCount: 20
     spawnInterval: 1.6
   - waveName: "Wave 4 - \u0110\u1ED9i Th\u1EA7y Tu Ph\xF2ng Th\u1EE7 (Monks)"
     enemyPrefab: {fileID: 1100000000000001, guid: f6a2b3c4d5e6f7a8b9c0d1e2f3a4b5d6, type: 3}
-    enemyCount: 15
+    enemyCount: 20
     spawnInterval: 1.8
   - waveName: "Wave 5 - \U0001F479 TR\xD9M CU\u1ED0I (\u0110\u1EA0I T\u01AF\u1EDANG
       ORC)"
