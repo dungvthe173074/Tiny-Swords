@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
         OnBaseHealthChanged?.Invoke(currentBaseHealth, maxBaseHealth);
 
         Debug.Log($"[GameManager] Nhà chính bị tấn công! Máu còn lại: {currentBaseHealth}/{maxBaseHealth}");
+        AudioManager.Instance.PlaySFX("TowerDamage");
 
         if (currentBaseHealth <= 0)
         {
