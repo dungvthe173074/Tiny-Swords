@@ -608,7 +608,7 @@ MonoBehaviour:
   - waveName: "Wave 1 - \u0110\u1ED9i Ti\xEAn Phong (Warriors)"
     enemyPrefab: {fileID: 1100000000000001, guid: f3a2b3c4d5e6f7a8b9c0d1e2f3a4b5d3, type: 3}
     enemyCount: 10
-    spawnInterval: 1.8
+    spawnInterval: 2
   - waveName: "Wave 2 - Cung Th\u1EE7 T\u1EADp K\xEDch (Archers)"
     enemyPrefab: {fileID: 1100000000000001, guid: f4a2b3c4d5e6f7a8b9c0d1e2f3a4b5d4, type: 3}
     enemyCount: 10
@@ -1461,8 +1461,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35a3a4227e4f71f46b92a413fdd7e8ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  maxBaseHealth: 15
-  currentBaseHealth: 15
+  maxBaseHealth: 20
+  currentBaseHealth: 20
 --- !u!4 &1180904605
 Transform:
   m_ObjectHideFlags: 0
