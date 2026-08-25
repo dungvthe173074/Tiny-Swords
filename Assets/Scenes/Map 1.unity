@@ -1380,11 +1380,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dab273c01e58ccf4197742a4a3ac24fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TowerPlacementManager
-  playerGold: 250
+  playerGold: 300
   availableTowers:
   - {fileID: 6284372490517244619, guid: 66cec87b799b8044180023728528192b, type: 3}
   - {fileID: 7307508922448959622, guid: 1c15e5cd8653a0e4ba08b27465ecca62, type: 3}
   - {fileID: 3163015421717317094, guid: ab5df392edde24a44bf5e1de0dd0c1bf, type: 3}
+  - {fileID: 6284372490517244619, guid: 3e76121451e74ddfb155d22d654ee771, type: 3}
 --- !u!4 &866230282
 Transform:
   m_ObjectHideFlags: 0
@@ -1829,7 +1830,7 @@ GameObject:
   - component: {fileID: 1597870055}
   - component: {fileID: 1597870054}
   m_Layer: 0
-  m_Name: Monastery_0
+  m_Name: Enemy tower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
