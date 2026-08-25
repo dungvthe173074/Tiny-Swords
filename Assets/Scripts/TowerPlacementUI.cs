@@ -172,7 +172,7 @@ public class TowerPlacementUI : MonoBehaviour
             float barH = 38f;
 
             float goldW = 88f;
-            float btnW = 86f;
+            float btnW = 100f;
             float btnH = 28f;
             float spacing = 5f;
             int count = pm.availableTowers.Count;
@@ -212,9 +212,9 @@ public class TowerPlacementUI : MonoBehaviour
 
                 GUIStyle curStyle = isSelected ? towerBtnActiveStyle : (canAfford ? towerBtnStyle : towerBtnDisabledStyle);
 
-                string icon = i == 0 ? "🏹" : (i == 1 ? "🧪" : "🔥");
-                string shortName = i == 0 ? "Tên" : (i == 1 ? "Độc" : "Lửa");
-                string themeColor = i == 0 ? "#6EB4FF" : (i == 1 ? "#DF70FF" : "#FFD040");
+                string icon = i == 0 ? "🏹" : (i == 1 ? "🧪" : (i == 2 ? "🔥" : "👁️"));
+                string shortName = i == 0 ? "Tên" : (i == 1 ? "Độc" : (i == 2 ? "Lửa" : "Sniper"));
+                string themeColor = i == 0 ? "#6EB4FF" : (i == 1 ? "#DF70FF" : (i == 2 ? "#FFD040" : "#00FF00"));
                 string priceColor = canAfford ? "#FFD700" : "#FF5555";
                 string nameColor = isSelected ? "#FFFFFF" : themeColor;
 
@@ -254,8 +254,8 @@ public class TowerPlacementUI : MonoBehaviour
 
                     GUI.Box(tipRect, "", new GUIStyle { normal = { background = tooltipTex } });
 
-                    string icon = activeInfoIndex == 0 ? "🏹" : (activeInfoIndex == 1 ? "🧪" : "🔥");
-                    string themeColor = activeInfoIndex == 0 ? "#6EB4FF" : (activeInfoIndex == 1 ? "#DF70FF" : "#FFD040");
+                    string icon = activeInfoIndex == 0 ? "🏹" : (activeInfoIndex == 1 ? "🧪" : (activeInfoIndex == 2 ? "🔥" : "👁️"));
+                    string themeColor = activeInfoIndex == 0 ? "#6EB4FF" : (activeInfoIndex == 1 ? "#DF70FF" : (activeInfoIndex == 2 ? "#FFD040" : "#00FF00"));
                     string tipContent = $"<color={themeColor}><b>{icon} {t.towerName}</b></color>  •  ⚔️ <b>{t.damage}</b>  •  🎯 <b>{t.attackRange:F1}</b>  •  ⚡ <b>{t.fireRate:F1}/s</b>";
 
                     GUI.Label(new Rect(startX + 8, tipY + 1, tipW - 16, tipH), tipContent, tooltipStyle);
