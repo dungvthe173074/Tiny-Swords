@@ -169,14 +169,14 @@ public class TowerPlacementUI : MonoBehaviour
         {
             float startX = 12f;
             float startY = 10f;
-            float barH = 38f;
+            float barH = 42f;
 
-            float goldW = 88f;
-            float btnW = 100f;
-            float btnH = 28f;
-            float spacing = 5f;
+            float goldW = 96f;
+            float btnW = 108f;
+            float btnH = 32f;
+            float spacing = 6f;
             int count = pm.availableTowers.Count;
-            float cancelW = pm.HasSelectedTower ? 42f : 0f;
+            float cancelW = pm.HasSelectedTower ? 44f : 0f;
 
             float totalBarW = goldW + count * (btnW + spacing) + cancelW + 14f;
             Rect mainBarRect = new Rect(startX, startY, totalBarW, barH);
@@ -186,14 +186,14 @@ public class TowerPlacementUI : MonoBehaviour
             GUI.Box(mainBarRect, "", panelStyle);
 
             // Gold Badge
-            float goldX = startX + 5f;
+            float goldX = startX + 6f;
             float goldY = startY + 5f;
             float badgeH = barH - 10f;
             GUI.Box(new Rect(goldX, goldY, goldW, badgeH), "", new GUIStyle { normal = { background = goldBadgeTex } });
             GUI.Label(new Rect(goldX, goldY + 1, goldW, badgeH), $"🪙 <color=#FFD700><b>{pm.playerGold}</b></color> <color=#FFEE88><b>G</b></color>", goldBadgeStyle);
 
             // Tower Action Buttons
-            float curBtnX = startX + goldW + 9f;
+            float curBtnX = startX + goldW + 10f;
             float curBtnY = startY + (barH - btnH) * 0.5f;
 
             for (int i = 0; i < count; i++)
@@ -231,12 +231,12 @@ public class TowerPlacementUI : MonoBehaviour
             // Cancel Button (✕)
             if (pm.HasSelectedTower)
             {
-                Rect cancelRect = new Rect(curBtnX, curBtnY, 36f, btnH);
+                Rect cancelRect = new Rect(curBtnX, curBtnY, 38f, btnH);
                 if (GUI.Button(cancelRect, "✕", cancelBtnStyle))
                 {
                     pm.DeselectTower();
                 }
-                curBtnX += 40f;
+                curBtnX += 42f;
             }
 
             // 2. ULTRA-SLIM 1-LINE MICRO TOOLTIP
@@ -246,9 +246,9 @@ public class TowerPlacementUI : MonoBehaviour
                 Tower t = pm.availableTowers[activeInfoIndex];
                 if (t != null)
                 {
-                    float tipW = 320f;
-                    float tipH = 22f;
-                    float tipY = startY + barH + 3f;
+                    float tipW = 380f;
+                    float tipH = 26f;
+                    float tipY = startY + barH + 4f;
                     Rect tipRect = new Rect(startX, tipY, tipW, tipH);
                     activeUIRects.Add(tipRect);
 
@@ -258,7 +258,7 @@ public class TowerPlacementUI : MonoBehaviour
                     string themeColor = activeInfoIndex == 0 ? "#6EB4FF" : (activeInfoIndex == 1 ? "#DF70FF" : (activeInfoIndex == 2 ? "#FFD040" : "#55FF99"));
                     string tipContent = $"<color={themeColor}><b>{icon} {t.towerName}</b></color>  •  ⚔️ <b>{t.damage}</b>  •  🎯 <b>{t.attackRange:F1}</b>  •  ⚡ <b>{t.fireRate:F1}/s</b>";
 
-                    GUI.Label(new Rect(startX + 8, tipY + 1, tipW - 16, tipH), tipContent, tooltipStyle);
+                    GUI.Label(new Rect(startX + 10, tipY + 1, tipW - 20, tipH), tipContent, tooltipStyle);
                 }
             }
 
@@ -484,7 +484,7 @@ public class TowerPlacementUI : MonoBehaviour
         {
             goldBadgeStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 13,
+                fontSize = 15,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter,
                 richText = true
@@ -502,7 +502,7 @@ public class TowerPlacementUI : MonoBehaviour
         {
             towerBtnStyle = new GUIStyle(GUI.skin.button)
             {
-                fontSize = 12,
+                fontSize = 13,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter,
                 richText = true,
@@ -518,7 +518,7 @@ public class TowerPlacementUI : MonoBehaviour
         {
             towerBtnActiveStyle = new GUIStyle(GUI.skin.button)
             {
-                fontSize = 12,
+                fontSize = 13,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter,
                 richText = true,
@@ -533,7 +533,7 @@ public class TowerPlacementUI : MonoBehaviour
         {
             towerBtnDisabledStyle = new GUIStyle(GUI.skin.button)
             {
-                fontSize = 12,
+                fontSize = 13,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter,
                 richText = true,
@@ -547,7 +547,7 @@ public class TowerPlacementUI : MonoBehaviour
         {
             cancelBtnStyle = new GUIStyle(GUI.skin.button)
             {
-                fontSize = 13,
+                fontSize = 15,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter,
                 richText = true,
@@ -561,7 +561,7 @@ public class TowerPlacementUI : MonoBehaviour
         {
             tooltipStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 11,
+                fontSize = 13,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleLeft,
                 richText = true
@@ -573,7 +573,7 @@ public class TowerPlacementUI : MonoBehaviour
         {
             dayNightTextStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 11,
+                fontSize = 13,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleLeft,
                 richText = true
@@ -585,7 +585,7 @@ public class TowerPlacementUI : MonoBehaviour
         {
             dayNightTimerStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 11,
+                fontSize = 13,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleRight,
                 richText = true
@@ -597,7 +597,7 @@ public class TowerPlacementUI : MonoBehaviour
         {
             endSubtitleStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 24,
+                fontSize = 26,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter,
                 richText = true
@@ -609,7 +609,7 @@ public class TowerPlacementUI : MonoBehaviour
         {
             gameOverTitleStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 28,
+                fontSize = 30,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter,
                 richText = true
@@ -621,7 +621,7 @@ public class TowerPlacementUI : MonoBehaviour
         {
             gameOverBtnStyle = new GUIStyle(GUI.skin.button)
             {
-                fontSize = 14,
+                fontSize = 16,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter,
                 richText = true

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -112,11 +112,11 @@ public class MainMenuManager : MonoBehaviour
         float centerY = Screen.height * 0.5f;
 
         // Perfect Vertical Centering for entire menu block
-        float bannerW = Mathf.Min(520f, Screen.width - 40f);
-        float bannerH = 92f;
-        float btnW = 280f;
-        float btnH = 50f;
-        float btnSpacing = 12f;
+        float bannerW = Mathf.Min(560f, Screen.width - 40f);
+        float bannerH = 104f;
+        float btnW = 310f;
+        float btnH = 54f;
+        float btnSpacing = 14f;
 
         float totalMenuH = bannerH + 24f + 4 * (btnH + btnSpacing) - btnSpacing;
         float startY = Mathf.Max(20f, centerY - totalMenuH * 0.5f);
@@ -133,43 +133,43 @@ public class MainMenuManager : MonoBehaviour
         GUI.Box(new Rect(bannerX + innerPad, bannerY + innerPad, bannerW - innerPad * 2, bannerH - innerPad * 2), "", new GUIStyle { normal = { background = texLogoBackdrop } });
 
         // Embossed Title: TINY SWORDS
-        Rect titleShadowRect = new Rect(bannerX, bannerY + 12f, bannerW, 38f);
+        Rect titleShadowRect = new Rect(bannerX, bannerY + 14f, bannerW, 44f);
         GUI.Label(titleShadowRect, "TINY SWORDS", new GUIStyle(logoTitleStyle) { normal = { textColor = new Color(0.08f, 0.04f, 0.02f, 0.95f) } });
 
-        Rect titleRect = new Rect(bannerX, bannerY + 10f, bannerW, 38f);
+        Rect titleRect = new Rect(bannerX, bannerY + 12f, bannerW, 44f);
         GUI.Label(titleRect, "<color=#FFE066>TINY SWORDS</color>", logoTitleStyle);
 
         // Subtitle: TOWER DEFENSE LITE
-        Rect subRect = new Rect(bannerX, bannerY + 54f, bannerW, 22f);
-        GUI.Label(subRect, "TOWER DEFENSE LITE  ", logoSubtitleStyle);
+        Rect subRect = new Rect(bannerX, bannerY + 62f, bannerW, 26f);
+        GUI.Label(subRect, "TOWER DEFENSE LITE", logoSubtitleStyle);
 
         // --- 1.2 MAIN ACTION BUTTONS (CLEAN LABELS) ---
         float startBtnY = bannerY + bannerH + 24f;
 
         // Button 1: BẮT ĐẦU CHƠI (Emerald Green)
         Rect playRect = new Rect(centerX - btnW * 0.5f, startBtnY, btnW, btnH + 4f);
-        if (GUI.Button(playRect, "<b>BẮT ĐẦU CHƠI</b>", btnPlayStyle))
+        if (GUI.Button(playRect, "⚔️  <b>BẮT ĐẦU CHƠI</b>", btnPlayStyle))
         {
             currentState = MenuState.MapSelect;
         }
 
         // Button 2: HƯỚNG DẪN (Royal Blue)
         Rect guideRect = new Rect(centerX - btnW * 0.5f, startBtnY + (btnH + btnSpacing), btnW, btnH);
-        if (GUI.Button(guideRect, "<b>HƯỚNG DẪN</b>", btnRegularStyle))
+        if (GUI.Button(guideRect, "📖  <b>HƯỚNG DẪN</b>", btnRegularStyle))
         {
             currentState = MenuState.Guide;
         }
 
         // Button 3: CÀI ĐẶT (Slate Blue)
         Rect settingsRect = new Rect(centerX - btnW * 0.5f, startBtnY + (btnH + btnSpacing) * 2, btnW, btnH);
-        if (GUI.Button(settingsRect, "<b>CÀI ĐẶT</b>", btnRegularStyle))
+        if (GUI.Button(settingsRect, "⚙️  <b>CÀI ĐẶT</b>", btnRegularStyle))
         {
             currentState = MenuState.Settings;
         }
 
         // Button 4: THOÁT GAME (Crimson Red)
         Rect exitRect = new Rect(centerX - btnW * 0.5f, startBtnY + (btnH + btnSpacing) * 3, btnW, btnH);
-        if (GUI.Button(exitRect, "<b>THOÁT GAME</b>", btnRedStyle))
+        if (GUI.Button(exitRect, "🚪  <b>THOÁT GAME</b>", btnRedStyle))
         {
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
@@ -179,10 +179,10 @@ public class MainMenuManager : MonoBehaviour
         }
 
         // Footer copyright
-        GUI.Label(new Rect(10, Screen.height - 26, Screen.width - 20, 22), "© 2026 PRU Group Project  •  Tiny Swords Tower Defense", new GUIStyle(GUI.skin.label)
+        GUI.Label(new Rect(10, Screen.height - 28, Screen.width - 20, 24), "© 2026 PRU Group Project  •  Tiny Swords Tower Defense", new GUIStyle(GUI.skin.label)
         {
             alignment = TextAnchor.MiddleCenter,
-            fontSize = 11,
+            fontSize = 12,
             normal = { textColor = new Color(0.75f, 0.85f, 0.95f, 0.75f) }
         });
     }
@@ -195,8 +195,8 @@ public class MainMenuManager : MonoBehaviour
         float centerX = Screen.width * 0.5f;
         float centerY = Screen.height * 0.5f;
 
-        float panelW = Mathf.Min(840f, Screen.width - 24f);
-        float panelH = Mathf.Min(470f, Screen.height - 30f);
+        float panelW = Mathf.Min(960f, Screen.width - 24f);
+        float panelH = Mathf.Min(530f, Screen.height - 30f);
         float panelX = centerX - panelW * 0.5f;
         float panelY = centerY - panelH * 0.5f;
 
@@ -206,34 +206,35 @@ public class MainMenuManager : MonoBehaviour
             new Color(0.85f, 0.65f, 0.25f, 1.0f), 3);
 
         // Header Title
-        GUI.Label(new Rect(panelX, panelY + 14f, panelW, 30f), "⚔️  <b>CHỌN BẢN ĐỒ CHIẾN TRƯỜNG</b>  ⚔️", headerStyle);
+        GUI.Label(new Rect(panelX, panelY + 16f, panelW, 36f), "⚔️  <b>CHỌN BẢN ĐỒ CHIẾN TRƯỜNG</b>  ⚔️", headerStyle);
 
         // 3 Map Cards
-        float pad = 16f;
-        float gap = 12f;
+        float pad = 20f;
+        float gap = 16f;
         float cardW = (panelW - pad * 2f - gap * 2f) / 3f;
-        float cardH = panelH - 128f;
-        float cardStartY = panelY + 54f;
+        float cardH = panelH - 142f;
+        float cardStartY = panelY + 62f;
 
         // --- MAP 1: THUNG LŨNG (10 QUÁI / WAVE) ---
         float card1X = panelX + pad;
         Rect card1Rect = new Rect(card1X, cardStartY, cardW, cardH);
         DrawPanel(card1Rect, new Color(0.06f, 0.11f, 0.16f, 0.98f), new Color(0.25f, 0.78f, 0.45f, 1.0f), 2);
 
-        GUI.Label(new Rect(card1X + 8, cardStartY + 12, cardW - 16, 24), "🏞️  <b>Map 1: Thung Lũng Xanh</b>", cardTitleStyle);
+        GUI.Label(new Rect(card1X + 8, cardStartY + 14, cardW - 16, 28), "🏞️  <b>Map 1: Thung Lũng Xanh</b>", cardTitleStyle);
 
-        Rect b1 = new Rect(card1X + cardW * 0.5f - 55, cardStartY + 38, 110, 22);
+        Rect b1 = new Rect(card1X + cardW * 0.5f - 65, cardStartY + 46, 130, 26);
         DrawPanel(b1, new Color(0.10f, 0.38f, 0.18f, 1f), new Color(0.40f, 0.90f, 0.55f, 1f), 1);
         GUI.Label(b1, "🟢 SẴN SÀNG", badgeStyle);
 
-        string desc1 = "• <b>Địa hình:</b> Thung lũng uốn lượn\n" +
-                       "• <b>Số đợt:</b> 5 Waves (10 quái/đợt)\n" +
-                       "• <b>Trùm Cuối:</b> Đại Tướng Orc (Wave 5)";
-        GUI.Label(new Rect(card1X + 12, cardStartY + 68, cardW - 24, 130), desc1, cardDescStyle);
+        string desc1 = "• <b>Địa hình:</b> Thung lũng uốn lượn\n\n" +
+                       "• <b>Số đợt:</b> <color=#55FF88>5 Waves (10 quái/đợt)</color>\n\n" +
+                       "• <b>Trùm Cuối:</b> <color=#FF7777>Đại Tướng Orc (Wave 5)</color>";
+        float descH = cardH - 148f;
+        GUI.Label(new Rect(card1X + 16, cardStartY + 84, cardW - 32, descH), desc1, cardDescStyle);
 
-        float btnActionW = cardW - 24f;
-        float btnActionH = 42f;
-        Rect fight1Rect = new Rect(card1X + 12, cardStartY + cardH - 52f, btnActionW, btnActionH);
+        float btnActionW = cardW - 32f;
+        float btnActionH = 46f;
+        Rect fight1Rect = new Rect(card1X + 16, cardStartY + cardH - 58f, btnActionW, btnActionH);
         if (GUI.Button(fight1Rect, "⚔️  <b>VÀO TRẬN</b>", btnPlayStyle))
         {
             SceneManager.LoadScene("Map 1");
@@ -244,18 +245,18 @@ public class MainMenuManager : MonoBehaviour
         Rect card2Rect = new Rect(card2X, cardStartY, cardW, cardH);
         DrawPanel(card2Rect, new Color(0.06f, 0.11f, 0.16f, 0.98f), new Color(0.25f, 0.78f, 0.45f, 1.0f), 2);
 
-        GUI.Label(new Rect(card2X + 8, cardStartY + 12, cardW - 16, 24), "🌀  <b>Map 2: Đường Ziczac</b>", cardTitleStyle);
+        GUI.Label(new Rect(card2X + 8, cardStartY + 14, cardW - 16, 28), "🌀  <b>Map 2: Đường Ziczac</b>", cardTitleStyle);
 
-        Rect b2 = new Rect(card2X + cardW * 0.5f - 55, cardStartY + 38, 110, 22);
+        Rect b2 = new Rect(card2X + cardW * 0.5f - 65, cardStartY + 46, 130, 26);
         DrawPanel(b2, new Color(0.10f, 0.38f, 0.18f, 1f), new Color(0.40f, 0.90f, 0.55f, 1f), 1);
         GUI.Label(b2, "🟢 SẴN SÀNG", badgeStyle);
 
-        string desc2 = "• <b>Địa hình:</b> Mê cung ziczac quanh co\n" +
-                       "• <b>Số đợt:</b> 5 Waves (15 quái/đợt)\n" +
-                       "• <b>Trùm Cuối:</b> Đại Tướng Orc (Wave 5)";
-        GUI.Label(new Rect(card2X + 12, cardStartY + 68, cardW - 24, 130), desc2, cardDescStyle);
+        string desc2 = "• <b>Địa hình:</b> Mê cung ziczac quanh co\n\n" +
+                       "• <b>Số đợt:</b> <color=#55FF88>5 Waves (15 quái/đợt)</color>\n\n" +
+                       "• <b>Trùm Cuối:</b> <color=#FF7777>Đại Tướng Orc (Wave 5)</color>";
+        GUI.Label(new Rect(card2X + 16, cardStartY + 84, cardW - 32, descH), desc2, cardDescStyle);
 
-        Rect fight2Rect = new Rect(card2X + 12, cardStartY + cardH - 52f, btnActionW, btnActionH);
+        Rect fight2Rect = new Rect(card2X + 16, cardStartY + cardH - 58f, btnActionW, btnActionH);
         if (GUI.Button(fight2Rect, "⚔️  <b>VÀO TRẬN</b>", btnPlayStyle))
         {
             SceneManager.LoadScene("Map 2");
@@ -266,27 +267,27 @@ public class MainMenuManager : MonoBehaviour
         Rect card3Rect = new Rect(card3X, cardStartY, cardW, cardH);
         DrawPanel(card3Rect, new Color(0.06f, 0.11f, 0.16f, 0.98f), new Color(0.25f, 0.78f, 0.45f, 1.0f), 2);
 
-        GUI.Label(new Rect(card3X + 8, cardStartY + 12, cardW - 16, 24), "🏰  <b>Map 3: Vòng Vây Pháo Đài</b>", cardTitleStyle);
+        GUI.Label(new Rect(card3X + 8, cardStartY + 14, cardW - 16, 28), "🏰  <b>Map 3: Pháo Đài Tử Thủ</b>", cardTitleStyle);
 
-        Rect b3 = new Rect(card3X + cardW * 0.5f - 55, cardStartY + 38, 110, 22);
+        Rect b3 = new Rect(card3X + cardW * 0.5f - 65, cardStartY + 46, 130, 26);
         DrawPanel(b3, new Color(0.10f, 0.38f, 0.18f, 1f), new Color(0.40f, 0.90f, 0.55f, 1f), 1);
         GUI.Label(b3, "🟢 SẴN SÀNG", badgeStyle);
 
-        string desc3 = "• <b>Địa hình:</b> Đường bao quanh pháo đài\n" +
-                       "• <b>Số đợt:</b> 5 Waves (20 quái/đợt)\n" +
-                       "• <b>Trùm Cuối:</b> Đại Tướng Orc (Wave 5)";
-        GUI.Label(new Rect(card3X + 12, cardStartY + 68, cardW - 24, 130), desc3, cardDescStyle);
+        string desc3 = "• <b>Địa hình:</b> Đường bao quanh pháo đài\n\n" +
+                       "• <b>Số đợt:</b> <color=#55FF88>5 Waves (20 quái/đợt)</color>\n\n" +
+                       "• <b>Trùm Cuối:</b> <color=#FF7777>Đại Tướng Orc (Wave 5)</color>";
+        GUI.Label(new Rect(card3X + 16, cardStartY + 84, cardW - 32, descH), desc3, cardDescStyle);
 
-        Rect fight3Rect = new Rect(card3X + 12, cardStartY + cardH - 52f, btnActionW, btnActionH);
+        Rect fight3Rect = new Rect(card3X + 16, cardStartY + cardH - 58f, btnActionW, btnActionH);
         if (GUI.Button(fight3Rect, "⚔️  <b>VÀO TRẬN</b>", btnPlayStyle))
         {
             SceneManager.LoadScene("Map 3");
         }
 
         // Back Button
-        float backW = 160f;
-        float backH = 40f;
-        Rect backRect = new Rect(centerX - backW * 0.5f, panelY + panelH - 52f, backW, backH);
+        float backW = 180f;
+        float backH = 46f;
+        Rect backRect = new Rect(centerX - backW * 0.5f, panelY + panelH - 58f, backW, backH);
         if (GUI.Button(backRect, "⬅  <b>QUAY LẠI</b>", btnRegularStyle))
         {
             currentState = MenuState.Main;
@@ -301,8 +302,8 @@ public class MainMenuManager : MonoBehaviour
         float centerX = Screen.width * 0.5f;
         float centerY = Screen.height * 0.5f;
 
-        float modalW = Mathf.Min(780f, Screen.width - 24f);
-        float modalH = Mathf.Min(490f, Screen.height - 30f);
+        float modalW = Mathf.Min(920f, Screen.width - 24f);
+        float modalH = Mathf.Min(560f, Screen.height - 30f);
         float modalX = centerX - modalW * 0.5f;
         float modalY = centerY - modalH * 0.5f;
 
@@ -311,36 +312,36 @@ public class MainMenuManager : MonoBehaviour
             new Color(0.08f, 0.11f, 0.16f, 0.98f),
             new Color(0.85f, 0.65f, 0.25f, 1.0f), 3);
 
-        GUI.Label(new Rect(modalX, modalY + 14f, modalW, 30f), "📖  <b>CẨM NANG CHIẾN THUẬT TINY SWORDS</b>  📖", headerStyle);
+        GUI.Label(new Rect(modalX, modalY + 16f, modalW, 36f), "📖  <b>CẨM NANG CHIẾN THUẬT TINY SWORDS</b>  📖", headerStyle);
 
         // Inner Box
-        Rect contentRect = new Rect(modalX + 16f, modalY + 48f, modalW - 32f, modalH - 110f);
+        Rect contentRect = new Rect(modalX + 20f, modalY + 58f, modalW - 40f, modalH - 128f);
         DrawPanel(contentRect,
             new Color(0.05f, 0.07f, 0.11f, 0.95f),
             new Color(0.25f, 0.35f, 0.48f, 0.8f), 1);
 
         string guideContent =
-            "<b>1. NHIỆM VỤ BẢO VỆ NHÀ CHÍNH (CASTLE):</b>\n" +
-            "• Ngăn chặn quái vật tiếp cận Lâu Đài Xanh. Máu nhà chính khởi đầu là <b>15 HP</b>.\n\n" +
-            "<b>2. BINH PHÁP 4 LOẠI THÁP PHÒNG THỦ:</b>\n" +
-            "• 🏹 <b>Tháp Tên (50G):</b> Tầm 4.5 • Tốc độ 1.6/s • Sát thương 25. Diệt quái cơ động.\n" +
-            "• 🧪 <b>Tháp Độc (75G):</b> Tầm 3.8 • Tốc độ 1.2/s • Sát thương 42 • <b>Gây Làm Chậm 45%</b>.\n" +
-            "• 🔥 <b>Tháp Lửa (100G):</b> Tầm 3.2 • Tốc độ 0.85/s • Sát thương 75 • <b>Gây Thiêu Đốt Rút Máu</b>.\n" +
-            "• 🎯 <b>Tháp Sniper (300G):</b> Tầm 15.0 • Tốc độ 0.2/s • Sát thương 500. <b>Chuyên diệt quái trâu & Boss</b>.\n\n" +
-            "<b>3. HIỆN TƯỢNG NGÀY / ĐÊM & TRÙM CUỐI (BOSS ORC):</b>\n" +
-            "• ☀️ <b>Ban Ngày:</b> Ánh sáng 100%, quái vật di chuyển tốc độ chuẩn.\n" +
-            "• 🌙 <b>Ban Đêm:</b> Tầm nhìn giảm 80%, quái vật nhận hiệu ứng <b>Cuồng Nộ (+30% Tốc độ)</b>.\n" +
-            "• 👹 <b>Trùm Cuối:</b> Xuất hiện ở Wave 5, máu siêu trâu! <b>Nếu Boss vào nhà chính sẽ THUA NGAY LẬP TỨC!</b>\n\n" +
-            "<b>4. THAO TÁC ĐIỀU KHIỂN:</b>\n" +
-            "• <b>Chuột Trái:</b> Chọn loại tháp và bấm vào ô đất để xây.\n" +
-            "• <b>Chuột Phải / Phím ✕:</b> Hủy chọn tháp  •  <b>Phím ESC:</b> Tạm dừng trận đấu.";
+            "<color=#FFE066><b>1. NHIỆM VỤ BẢO VỆ NHÀ CHÍNH (CASTLE):</b></color>\n" +
+            "  • Ngăn chặn quái vật tiếp cận Lâu Đài Xanh. Máu nhà chính khởi đầu là <color=#55FF88><b>15 HP</b></color>.\n\n" +
+            "<color=#FFE066><b>2. BINH PHÁP 4 LOẠI THÁP PHÒNG THỦ:</b></color>\n" +
+            "  • 🏹 <b>Tháp Tên (50G):</b> Tầm 4.5 • Tốc độ 1.6/s • Sát thương 25 • <i>Diệt quái cơ động nhanh.</i>\n" +
+            "  • 🧪 <b>Tháp Độc (75G):</b> Tầm 3.8 • Tốc độ 1.2/s • Sát thương 42 • <color=#DF70FF><b>Gây Làm Chậm 45%</b></color>.\n" +
+            "  • 🔥 <b>Tháp Lửa (100G):</b> Tầm 3.2 • Tốc độ 0.85/s • Sát thương 75 • <color=#FF8844><b>Gây Thiêu Đốt Rút Máu</b></color>.\n" +
+            "  • 🎯 <b>Tháp Sniper (300G):</b> Tầm 15.0 • Tốc độ 0.2/s • Sát thương 500 • <color=#FFD700><b>Chuyên diệt quái trâu & Boss</b></color>.\n\n" +
+            "<color=#FFE066><b>3. HIỆN TƯỢNG NGÀY / ĐÊM & TRÙM CUỐI (BOSS ORC):</b></color>\n" +
+            "  • ☀️ <b>Ban Ngày:</b> Ánh sáng 100%, quái vật di chuyển tốc độ chuẩn.\n" +
+            "  • 🌙 <b>Ban Đêm:</b> Tầm nhìn giảm 80%, quái nhận hiệu ứng <color=#FF5555><b>Cuồng Nộ (+30% Tốc độ)</b></color>.\n" +
+            "  • 👹 <b>Trùm Cuối:</b> Xuất hiện ở Wave 5, máu siêu trâu! <color=#FF3333><b>Nếu Boss vào nhà chính sẽ THUA NGAY LẬP TỨC!</b></color>\n\n" +
+            "<color=#FFE066><b>4. THAO TÁC ĐIỀU KHIỂN:</b></color>\n" +
+            "  • <b>Chuột Trái:</b> Chọn loại tháp trên thanh công cụ và bấm vào ô đất cỏ để xây.\n" +
+            "  • <b>Chuột Phải / Phím ✕:</b> Hủy chọn tháp đang cầm  •  <b>Phím ESC:</b> Tạm dừng trận đấu.";
 
-        GUI.Label(new Rect(contentRect.x + 14f, contentRect.y + 10f, contentRect.width - 28f, contentRect.height - 20f), guideContent, bodyStyle);
+        GUI.Label(new Rect(contentRect.x + 18f, contentRect.y + 14f, contentRect.width - 36f, contentRect.height - 28f), guideContent, bodyStyle);
 
         // Close Button
-        float closeW = 160f;
-        float closeH = 40f;
-        Rect closeRect = new Rect(centerX - closeW * 0.5f, modalY + modalH - 50f, closeW, closeH);
+        float closeW = 180f;
+        float closeH = 46f;
+        Rect closeRect = new Rect(centerX - closeW * 0.5f, modalY + modalH - 56f, closeW, closeH);
         if (GUI.Button(closeRect, "✓  <b>ĐÃ HIỂU</b>", btnPlayStyle))
         {
             currentState = MenuState.Main;
@@ -355,8 +356,8 @@ public class MainMenuManager : MonoBehaviour
         float centerX = Screen.width * 0.5f;
         float centerY = Screen.height * 0.5f;
 
-        float modalW = Mathf.Min(540f, Screen.width - 24f);
-        float modalH = Mathf.Min(370f, Screen.height - 30f);
+        float modalW = Mathf.Min(600f, Screen.width - 24f);
+        float modalH = Mathf.Min(400f, Screen.height - 30f);
         float modalX = centerX - modalW * 0.5f;
         float modalY = centerY - modalH * 0.5f;
 
@@ -365,33 +366,32 @@ public class MainMenuManager : MonoBehaviour
             new Color(0.08f, 0.11f, 0.16f, 0.98f),
             new Color(0.85f, 0.65f, 0.25f, 1.0f), 3);
 
-        GUI.Label(new Rect(modalX, modalY + 14f, modalW, 30f), "⚙️  <b>CÀI ĐẶT TRÒ CHƠI</b>  ⚙️", headerStyle);
+        GUI.Label(new Rect(modalX, modalY + 16f, modalW, 36f), "⚙️  <b>CÀI ĐẶT TRÒ CHƠI</b>  ⚙️", headerStyle);
 
         // Inner Box
-        Rect contentRect = new Rect(modalX + 16f, modalY + 48f, modalW - 32f, modalH - 110f);
+        Rect contentRect = new Rect(modalX + 20f, modalY + 58f, modalW - 40f, modalH - 128f);
         DrawPanel(contentRect,
             new Color(0.05f, 0.07f, 0.11f, 0.95f),
             new Color(0.25f, 0.35f, 0.48f, 0.8f), 1);
 
-        float optX = contentRect.x + 20f;
-        float optY = contentRect.y + 16f;
-        float optW = contentRect.width - 40f;
+        float optX = contentRect.x + 24f;
+        float optY = contentRect.y + 20f;
+        float optW = contentRect.width - 48f;
 
         // Music Volume
-        GUI.Label(new Rect(optX, optY, optW, 22f), $"🎵  <b>Nhạc Nền (BGM):</b>  {(int)(bgmVolume * 100)}%", bodyStyle);
-        bgmVolume = GUI.HorizontalSlider(new Rect(optX, optY + 24f, optW, 20f), bgmVolume, 0f, 1f);
+        GUI.Label(new Rect(optX, optY, optW, 26f), $"🎵  <b>Nhạc Nền (BGM):</b>  <color=#FFE066>{(int)(bgmVolume * 100)}%</color>", bodyStyle);
+        bgmVolume = GUI.HorizontalSlider(new Rect(optX, optY + 30f, optW, 24f), bgmVolume, 0f, 1f);
         OnBGMVolumeChanged?.Invoke(bgmVolume);
 
         // SFX Volume
-        GUI.Label(new Rect(optX, optY + 52f, optW, 22f), $"🔊  <b>Hiệu Ứng Âm Thanh (SFX):</b>  {(int)(sfxVolume * 100)}%", bodyStyle);
-        sfxVolume = GUI.HorizontalSlider(new Rect(optX, optY + 76f, optW, 20f), sfxVolume, 0f, 1f);
+        GUI.Label(new Rect(optX, optY + 68f, optW, 26f), $"🔊  <b>Hiệu Ứng Âm Thanh (SFX):</b>  <color=#FFE066>{(int)(sfxVolume * 100)}%</color>", bodyStyle);
+        sfxVolume = GUI.HorizontalSlider(new Rect(optX, optY + 98f, optW, 24f), sfxVolume, 0f, 1f);
         OnSFXVolumeChanged?.Invoke(sfxVolume);
 
-
         // Close Button
-        float closeW = 160f;
-        float closeH = 40f;
-        Rect closeRect = new Rect(centerX - closeW * 0.5f, modalY + modalH - 50f, closeW, closeH);
+        float closeW = 180f;
+        float closeH = 46f;
+        Rect closeRect = new Rect(centerX - closeW * 0.5f, modalY + modalH - 56f, closeW, closeH);
         if (GUI.Button(closeRect, "✓  <b>LƯU & ĐÓNG</b>", btnPlayStyle))
         {
             currentState = MenuState.Main;
@@ -554,7 +554,7 @@ public class MainMenuManager : MonoBehaviour
         {
             logoTitleStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 28,
+                fontSize = 32,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter,
                 richText = true
@@ -566,7 +566,7 @@ public class MainMenuManager : MonoBehaviour
         {
             logoSubtitleStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 11,
+                fontSize = 13,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter,
                 richText = true
@@ -578,7 +578,7 @@ public class MainMenuManager : MonoBehaviour
         {
             btnPlayStyle = new GUIStyle(GUI.skin.button)
             {
-                fontSize = 15,
+                fontSize = 17,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter,
                 richText = true
@@ -593,7 +593,7 @@ public class MainMenuManager : MonoBehaviour
         {
             btnRegularStyle = new GUIStyle(GUI.skin.button)
             {
-                fontSize = 13,
+                fontSize = 15,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter,
                 richText = true
@@ -608,7 +608,7 @@ public class MainMenuManager : MonoBehaviour
         {
             btnRedStyle = new GUIStyle(GUI.skin.button)
             {
-                fontSize = 13,
+                fontSize = 15,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter,
                 richText = true
@@ -623,7 +623,7 @@ public class MainMenuManager : MonoBehaviour
         {
             headerStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 19,
+                fontSize = 22,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter,
                 richText = true
@@ -635,7 +635,7 @@ public class MainMenuManager : MonoBehaviour
         {
             bodyStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 12,
+                fontSize = 15,
                 fontStyle = FontStyle.Normal,
                 alignment = TextAnchor.UpperLeft,
                 richText = true,
@@ -648,7 +648,7 @@ public class MainMenuManager : MonoBehaviour
         {
             cardTitleStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 15,
+                fontSize = 17,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter,
                 richText = true
@@ -660,20 +660,20 @@ public class MainMenuManager : MonoBehaviour
         {
             cardDescStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 11,
+                fontSize = 14,
                 fontStyle = FontStyle.Normal,
                 alignment = TextAnchor.UpperLeft,
                 richText = true,
                 wordWrap = true
             };
-            cardDescStyle.normal.textColor = new Color(0.85f, 0.90f, 1f, 1f);
+            cardDescStyle.normal.textColor = new Color(0.88f, 0.92f, 1f, 1f);
         }
 
         if (badgeStyle == null)
         {
             badgeStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 10,
+                fontSize = 13,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter,
                 richText = true
