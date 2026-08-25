@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -141,7 +141,7 @@ public class MainMenuManager : MonoBehaviour
 
         // Subtitle: TOWER DEFENSE LITE
         Rect subRect = new Rect(bannerX, bannerY + 54f, bannerW, 22f);
-        GUI.Label(subRect, "TOWER DEFENSE LITE  •  ALPHA v0.3", logoSubtitleStyle);
+        GUI.Label(subRect, "TOWER DEFENSE LITE  ", logoSubtitleStyle);
 
         // --- 1.2 MAIN ACTION BUTTONS (CLEAN LABELS) ---
         float startBtnY = bannerY + bannerH + 24f;
@@ -179,7 +179,7 @@ public class MainMenuManager : MonoBehaviour
         }
 
         // Footer copyright
-        GUI.Label(new Rect(10, Screen.height - 26, Screen.width - 20, 22), "© 2026 PRU Group Project  •  Tiny Swords Tower Defense Alpha", new GUIStyle(GUI.skin.label)
+        GUI.Label(new Rect(10, Screen.height - 26, Screen.width - 20, 22), "© 2026 PRU Group Project  •  Tiny Swords Tower Defense", new GUIStyle(GUI.skin.label)
         {
             alignment = TextAnchor.MiddleCenter,
             fontSize = 11,
@@ -387,13 +387,6 @@ public class MainMenuManager : MonoBehaviour
         sfxVolume = GUI.HorizontalSlider(new Rect(optX, optY + 76f, optW, 20f), sfxVolume, 0f, 1f);
         OnSFXVolumeChanged?.Invoke(sfxVolume);
 
-        // Fullscreen Toggle
-        bool newFullscreen = GUI.Toggle(new Rect(optX, optY + 112f, optW, 24f), isFullscreen, "  🖥️  <b>Chế Độ Toàn Màn Hình (Fullscreen)</b>", bodyStyle);
-        if (newFullscreen != isFullscreen)
-        {
-            isFullscreen = newFullscreen;
-            Screen.fullScreen = isFullscreen;
-        }
 
         // Close Button
         float closeW = 160f;
