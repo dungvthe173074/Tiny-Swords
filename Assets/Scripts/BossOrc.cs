@@ -59,6 +59,10 @@ public class BossOrc : MonoBehaviour
         {
             sr.sortingOrder = 20; // Render in front
         }
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX("Warning");
+        }
     }
 
     private void OnEnable()

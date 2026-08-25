@@ -565,6 +565,16 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: f9294b6b98a94364a8d812b01a10085a, type: 3}
   - name: PlaceTower
     clip: {fileID: 8300000, guid: 756de1a55e49e8340abfc3e59e275cfb, type: 3}
+  - name: GameOver
+    clip: {fileID: 8300000, guid: 37ba0164f78b48f4fb48609ada518d79, type: 3}
+  - name: SniperTower
+    clip: {fileID: 8300000, guid: 7c37fa3e060821043a3138be4ae8f530, type: 3}
+  - name: Win
+    clip: {fileID: 8300000, guid: a5153795a8dff1b4ebc74cdcd90f2b35, type: 3}
+  - name: TowerDamage
+    clip: {fileID: 8300000, guid: 756de1a55e49e8340abfc3e59e275cfb, type: 3}
+  - name: Warning
+    clip: {fileID: 8300000, guid: 75ea871a7f2e4ed4eb827d5b6da769a6, type: 3}
   AudioSource: {fileID: 146924161}
   sfxSource: {fileID: 1671121667}
 --- !u!4 &1800248078

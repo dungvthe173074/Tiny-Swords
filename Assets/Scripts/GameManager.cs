@@ -38,7 +38,8 @@ public class GameManager : MonoBehaviour
         OnBaseHealthChanged?.Invoke(currentBaseHealth, maxBaseHealth);
 
         Debug.Log($"[GameManager] Nhà chính bị tấn công! Máu còn lại: {currentBaseHealth}/{maxBaseHealth}");
-        AudioManager.Instance.PlaySFX("TowerDamage");
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX("TowerDamage");
 
         if (currentBaseHealth <= 0)
         {
@@ -53,6 +54,10 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f;
         Debug.Log("[GameManager] 🏆 VICTORY! Bạn đã bảo vệ thành công Nhà Chính và vượt qua tất cả các đợt quái!");
         OnVictory?.Invoke();
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX("Win");
+        }
     }
 
     private void GameOver()
@@ -62,6 +67,10 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f;
         Debug.Log("[GameManager] 💀 GAME OVER! Nhà chính đã bị phá hủy.");
         OnGameOver?.Invoke();
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX("GameOver");
+        }
     }
 
     public void RestartGame()
