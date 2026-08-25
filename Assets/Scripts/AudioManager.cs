@@ -87,4 +87,9 @@ public class AudioManager : MonoBehaviour
     {
         sfxSource.volume = volume;
     }
+    private void Update()
+    {
+        MusicVolume(MainMenuManager.Instance.bgmVolume);
+        SFXVolume(MainMenuManager.Instance.sfxVolume);
+    }
 }
