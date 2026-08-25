@@ -368,6 +368,11 @@ public class TowerPlacementUI : MonoBehaviour
                 {
                     GUI.Label(new Rect(centerX - 250, goY, 500, 80), "💀 <color=#FF4444><b>GAME OVER</b></color>", endSubtitleStyle);
                 }
+
+                if (!string.IsNullOrEmpty(gm.GameOverReason))
+                {
+                    GUI.Label(new Rect(centerX - 350f, goY + goH + 2f, 700f, 32f), $"<color=#FF7777><b>{gm.GameOverReason}</b></color>", endSubtitleStyle);
+                }
             }
 
             // END GAME ACTION BUTTONS

@@ -120,13 +120,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
+  isBoss: 0
   baseMaxHealth: 1200
   baseMoveSpeed: 1.4
   baseGoldReward: 35
   baseCastleDamage: 1
-  audioSource: {fileID: 5866226814314537527}
-  dieSound: {fileID: 8300000, guid: 54ff0dbbb1f65b84bb25ba42e563b5d4, type: 3}
-  dieVolume: 1
   maxHealth: 1200
   moveSpeed: 1.4
   goldReward: 35
