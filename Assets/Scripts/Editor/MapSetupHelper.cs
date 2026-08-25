@@ -446,7 +446,6 @@ public static class MapSetupHelper
         EnemyMovement em = temp.AddComponent<EnemyMovement>();
 
         Enemy enemy = temp.AddComponent<Enemy>();
-        enemy.isBoss = true;
         enemy.baseMaxHealth = 10000f;
         enemy.baseMoveSpeed = 0.85f;
         enemy.baseGoldReward = 500;

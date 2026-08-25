@@ -44,7 +44,6 @@ public class BossOrc : MonoBehaviour
         // Ensure boss stats are monstrous (Máu 10000, Đi Chậm 0.85, Sát Thương Nhà Chính 15)
         if (enemy != null)
         {
-            enemy.isBoss = true;
             enemy.baseMaxHealth = 10000f;
             enemy.baseMoveSpeed = 0.85f;
             enemy.baseGoldReward = 500;
