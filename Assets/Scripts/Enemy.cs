@@ -1,9 +1,13 @@
-﻿using System;
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(EnemyMovement))]
 public class Enemy : MonoBehaviour
 {
+    [Header("Enemy Classification")]
+    public bool isBoss = false;
+    public bool IsBoss => isBoss || (GetComponent<BossOrc>() != null && GetComponent<BossOrc>().isBoss) || gameObject.name.ToLower().Contains("boss");
+
     [Header("Base Enemy Stats")]
     public float baseMaxHealth = 150f;
     public float baseMoveSpeed = 3f;
@@ -288,11 +292,22 @@ public class Enemy : MonoBehaviour
     public void ReachGoal()
     {
         if (isDespawned) return;
-        Debug.Log($"[Enemy] {gameObject.name} reached the goal! Dealing {castleDamage} damage.");
 
-        if (GameManager.Instance != null)
+        if (IsBoss)
         {
-            GameManager.Instance.TakeBaseDamage(castleDamage);
+            Debug.Log($"[Enemy] 💀 BOSS {gameObject.name} reached the goal! Defeat immediately!");
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.DefeatByBoss();
+            }
+        }
+        else
+        {
+            Debug.Log($"[Enemy] {gameObject.name} reached the goal! Dealing {castleDamage} damage.");
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.TakeBaseDamage(castleDamage);
+            }
         }
 
         Despawn();

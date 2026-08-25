@@ -215,21 +215,20 @@ public class MainMenuManager : MonoBehaviour
         float cardH = panelH - 128f;
         float cardStartY = panelY + 54f;
 
-        // --- MAP 1: THUNG LŨNG XANH (READY / UNLOCKED) ---
+        // --- MAP 1: THUNG LŨNG (10 QUÁI / WAVE) ---
         float card1X = panelX + pad;
         Rect card1Rect = new Rect(card1X, cardStartY, cardW, cardH);
         DrawPanel(card1Rect, new Color(0.06f, 0.11f, 0.16f, 0.98f), new Color(0.25f, 0.78f, 0.45f, 1.0f), 2);
 
-        GUI.Label(new Rect(card1X + 8, cardStartY + 12, cardW - 16, 24), "🏞️  <b>Map 1: Thung Lũng</b>", cardTitleStyle);
+        GUI.Label(new Rect(card1X + 8, cardStartY + 12, cardW - 16, 24), "🏞️  <b>Map 1: Thung Lũng Xanh</b>", cardTitleStyle);
 
         Rect b1 = new Rect(card1X + cardW * 0.5f - 55, cardStartY + 38, 110, 22);
         DrawPanel(b1, new Color(0.10f, 0.38f, 0.18f, 1f), new Color(0.40f, 0.90f, 0.55f, 1f), 1);
         GUI.Label(b1, "🟢 SẴN SÀNG", badgeStyle);
 
-        string desc1 = "• <b>Địa hình:</b> Thung lũng & Sông suối\n" +
-                       "• <b>Số đợt:</b> 5 Waves (Boss Orc)\n" +
-                       "• <b>Hiện tượng:</b> Ngày/Đêm (+30% SPD)\n" +
-                       "• <b>Độ khó:</b> ⭐⭐ (Bình thường)";
+        string desc1 = "• <b>Địa hình:</b> Thung lũng uốn lượn\n" +
+                       "• <b>Số đợt:</b> 5 Waves (10 quái/đợt)\n" +
+                       "• <b>Trùm Cuối:</b> Đại Tướng Orc (Wave 5)";
         GUI.Label(new Rect(card1X + 12, cardStartY + 68, cardW - 24, 130), desc1, cardDescStyle);
 
         float btnActionW = cardW - 24f;
@@ -240,21 +239,20 @@ public class MainMenuManager : MonoBehaviour
             SceneManager.LoadScene("Map 1");
         }
 
-        // --- MAP 2: SA MẠC CÁT (LOCKED) ---
+        // --- MAP 2: ĐƯỜNG ZICZAC (15 QUÁI / WAVE) ---
         float card2X = card1X + cardW + gap;
         Rect card2Rect = new Rect(card2X, cardStartY, cardW, cardH);
-        DrawPanel(card2Rect, new Color(0.05f, 0.07f, 0.10f, 0.94f), new Color(0.28f, 0.32f, 0.38f, 0.8f), 1);
+        DrawPanel(card2Rect, new Color(0.06f, 0.11f, 0.16f, 0.98f), new Color(0.25f, 0.78f, 0.45f, 1.0f), 2);
 
-        GUI.Label(new Rect(card2X + 8, cardStartY + 12, cardW - 16, 24), "🏜️  <b>Map 2: Sa Mạc Cát</b>", cardTitleStyle);
+        GUI.Label(new Rect(card2X + 8, cardStartY + 12, cardW - 16, 24), "🌀  <b>Map 2: Đường Ziczac</b>", cardTitleStyle);
 
         Rect b2 = new Rect(card2X + cardW * 0.5f - 55, cardStartY + 38, 110, 22);
-        DrawPanel(b2, new Color(0.18f, 0.20f, 0.24f, 1f), new Color(0.45f, 0.48f, 0.55f, 1f), 1);
-        GUI.Label(b2, "🔒 SẮP RA MẮT", badgeStyle);
+        DrawPanel(b2, new Color(0.10f, 0.38f, 0.18f, 1f), new Color(0.40f, 0.90f, 0.55f, 1f), 1);
+        GUI.Label(b2, "🟢 SẴN SÀNG", badgeStyle);
 
-        string desc2 = "• <b>Địa hình:</b> Cồn cát sa mạc\n" +
-                       "• <b>Số đợt:</b> 6 Waves quái sa mạc\n" +
-                       "• <b>Hiện tượng:</b> Bão cát rực lửa\n" +
-                       "• <b>Độ khó:</b> ⭐⭐⭐⭐ (Khó)";
+        string desc2 = "• <b>Địa hình:</b> Mê cung ziczac quanh co\n" +
+                       "• <b>Số đợt:</b> 5 Waves (15 quái/đợt)\n" +
+                       "• <b>Trùm Cuối:</b> Đại Tướng Orc (Wave 5)";
         GUI.Label(new Rect(card2X + 12, cardStartY + 68, cardW - 24, 130), desc2, cardDescStyle);
 
         Rect fight2Rect = new Rect(card2X + 12, cardStartY + cardH - 52f, btnActionW, btnActionH);
@@ -263,21 +261,20 @@ public class MainMenuManager : MonoBehaviour
             SceneManager.LoadScene("Map 2");
         }
 
-        // --- MAP 3: NÚI LỬA (LOCKED) ---
+        // --- MAP 3: VÒNG VÂY PHÁO ĐÀI (20 QUÁI / WAVE) ---
         float card3X = card2X + cardW + gap;
         Rect card3Rect = new Rect(card3X, cardStartY, cardW, cardH);
-        DrawPanel(card3Rect, new Color(0.05f, 0.07f, 0.10f, 0.94f), new Color(0.28f, 0.32f, 0.38f, 0.8f), 1);
+        DrawPanel(card3Rect, new Color(0.06f, 0.11f, 0.16f, 0.98f), new Color(0.25f, 0.78f, 0.45f, 1.0f), 2);
 
-        GUI.Label(new Rect(card3X + 8, cardStartY + 12, cardW - 16, 24), "🌋  <b>Map 3: Núi Lửa</b>", cardTitleStyle);
+        GUI.Label(new Rect(card3X + 8, cardStartY + 12, cardW - 16, 24), "🏰  <b>Map 3: Vòng Vây Pháo Đài</b>", cardTitleStyle);
 
         Rect b3 = new Rect(card3X + cardW * 0.5f - 55, cardStartY + 38, 110, 22);
-        DrawPanel(b3, new Color(0.18f, 0.20f, 0.24f, 1f), new Color(0.45f, 0.48f, 0.55f, 1f), 1);
-        GUI.Label(b3, "🔒 SẮP RA MẮT", badgeStyle);
+        DrawPanel(b3, new Color(0.10f, 0.38f, 0.18f, 1f), new Color(0.40f, 0.90f, 0.55f, 1f), 1);
+        GUI.Label(b3, "🟢 SẴN SÀNG", badgeStyle);
 
-        string desc3 = "• <b>Địa hình:</b> Pháo đài dung nham\n" +
-                       "• <b>Số đợt:</b> 8 Waves (Boss Rồng)\n" +
-                       "• <b>Hiện tượng:</b> Mưa nham thạch\n" +
-                       "• <b>Độ khó:</b> ⭐⭐⭐⭐⭐ (Ác mộng)";
+        string desc3 = "• <b>Địa hình:</b> Đường bao quanh pháo đài\n" +
+                       "• <b>Số đợt:</b> 5 Waves (20 quái/đợt)\n" +
+                       "• <b>Trùm Cuối:</b> Đại Tướng Orc (Wave 5)";
         GUI.Label(new Rect(card3X + 12, cardStartY + 68, cardW - 24, 130), desc3, cardDescStyle);
 
         Rect fight3Rect = new Rect(card3X + 12, cardStartY + cardH - 52f, btnActionW, btnActionH);
@@ -304,8 +301,8 @@ public class MainMenuManager : MonoBehaviour
         float centerX = Screen.width * 0.5f;
         float centerY = Screen.height * 0.5f;
 
-        float modalW = Mathf.Min(760f, Screen.width - 24f);
-        float modalH = Mathf.Min(470f, Screen.height - 30f);
+        float modalW = Mathf.Min(780f, Screen.width - 24f);
+        float modalH = Mathf.Min(490f, Screen.height - 30f);
         float modalX = centerX - modalW * 0.5f;
         float modalY = centerY - modalH * 0.5f;
 
@@ -325,14 +322,15 @@ public class MainMenuManager : MonoBehaviour
         string guideContent =
             "<b>1. NHIỆM VỤ BẢO VỆ NHÀ CHÍNH (CASTLE):</b>\n" +
             "• Ngăn chặn quái vật tiếp cận Lâu Đài Xanh. Máu nhà chính khởi đầu là <b>15 HP</b>.\n\n" +
-            "<b>2. BINH PHÁP 3 LOẠI THÁP PHÒNG THỦ:</b>\n" +
+            "<b>2. BINH PHÁP 4 LOẠI THÁP PHÒNG THỦ:</b>\n" +
             "• 🏹 <b>Tháp Tên (50G):</b> Tầm 4.5 • Tốc độ 1.6/s • Sát thương 25. Diệt quái cơ động.\n" +
             "• 🧪 <b>Tháp Độc (75G):</b> Tầm 3.8 • Tốc độ 1.2/s • Sát thương 42 • <b>Gây Làm Chậm 45%</b>.\n" +
-            "• 🔥 <b>Tháp Lửa (100G):</b> Tầm 3.2 • Tốc độ 0.85/s • Sát thương 75 • <b>Gây Thiêu Đốt Rút Máu</b>.\n\n" +
+            "• 🔥 <b>Tháp Lửa (100G):</b> Tầm 3.2 • Tốc độ 0.85/s • Sát thương 75 • <b>Gây Thiêu Đốt Rút Máu</b>.\n" +
+            "• 🎯 <b>Tháp Sniper (300G):</b> Tầm 15.0 • Tốc độ 0.2/s • Sát thương 500. <b>Chuyên diệt quái trâu & Boss</b>.\n\n" +
             "<b>3. HIỆN TƯỢNG NGÀY / ĐÊM & TRÙM CUỐI (BOSS ORC):</b>\n" +
             "• ☀️ <b>Ban Ngày:</b> Ánh sáng 100%, quái vật di chuyển tốc độ chuẩn.\n" +
             "• 🌙 <b>Ban Đêm:</b> Tầm nhìn giảm 80%, quái vật nhận hiệu ứng <b>Cuồng Nộ (+30% Tốc độ)</b>.\n" +
-            "• 👹 <b>Trùm Cuối:</b> Xuất hiện ở Wave 5, máu siêu trâu và cuồng nộ khi máu dưới 40%!\n\n" +
+            "• 👹 <b>Trùm Cuối:</b> Xuất hiện ở Wave 5, máu siêu trâu! <b>Nếu Boss vào nhà chính sẽ THUA NGAY LẬP TỨC!</b>\n\n" +
             "<b>4. THAO TÁC ĐIỀU KHIỂN:</b>\n" +
             "• <b>Chuột Trái:</b> Chọn loại tháp và bấm vào ô đất để xây.\n" +
             "• <b>Chuột Phải / Phím ✕:</b> Hủy chọn tháp  •  <b>Phím ESC:</b> Tạm dừng trận đấu.";

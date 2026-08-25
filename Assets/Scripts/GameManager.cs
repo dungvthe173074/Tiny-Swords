@@ -47,6 +47,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void DefeatByBoss()
+    {
+        if (IsGameEnded) return;
+
+        currentBaseHealth = 0;
+        OnBaseHealthChanged?.Invoke(currentBaseHealth, maxBaseHealth);
+
+        Debug.Log("[GameManager] 💀 BOSS ĐÃ TIẾN VÀO NHÀ CHÍNH! Thua ngay lập tức.");
+        GameOver();
+    }
+
     public void Victory()
     {
         if (IsGameEnded) return;
