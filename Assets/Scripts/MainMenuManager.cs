@@ -278,9 +278,10 @@ public class MainMenuManager : MonoBehaviour
         GUI.Label(new Rect(card3X + 12, cardStartY + 68, cardW - 24, 130), desc3, cardDescStyle);
 
         Rect fight3Rect = new Rect(card3X + 12, cardStartY + cardH - 52f, btnActionW, btnActionH);
-        GUI.enabled = false;
-        GUI.Button(fight3Rect, "🔒  <b>CHƯA MỞ</b>", btnRegularStyle);
-        GUI.enabled = true;
+        if (GUI.Button(fight3Rect, "⚔️  <b>VÀO TRẬN</b>", btnPlayStyle))
+        {
+            SceneManager.LoadScene("Map 3");
+        }
 
         // Back Button
         float backW = 160f;
