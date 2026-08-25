@@ -255,9 +255,10 @@ public class MainMenuManager : MonoBehaviour
         GUI.Label(new Rect(card2X + 12, cardStartY + 68, cardW - 24, 130), desc2, cardDescStyle);
 
         Rect fight2Rect = new Rect(card2X + 12, cardStartY + cardH - 52f, btnActionW, btnActionH);
-        GUI.enabled = false;
-        GUI.Button(fight2Rect, "🔒  <b>CHƯA MỞ</b>", btnRegularStyle);
-        GUI.enabled = true;
+        if (GUI.Button(fight2Rect, "⚔️  <b>VÀO TRẬN</b>", btnPlayStyle))
+        {
+            SceneManager.LoadScene("Map 2");
+        }
 
         // --- MAP 3: NÚI LỬA (LOCKED) ---
         float card3X = card2X + cardW + gap;
