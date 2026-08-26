@@ -1,0 +1,14 @@
+# Cách chạy
+- Mở bằng Unity 6000.5.8f1
+- Chọn Assets/Scenes/MainMenu.unity
+- Nhấn nút Play
+
+# Thao tác điều khiển
+- Nhấn nút Bắt đầu chơi
+- Chọn Map
+- Chọn và đặt tháp
+- Tiêu diệt kẻ địch tránh để máu căn cứ xuống 0
+- Tiêu diệt Boss trước khi tới căn cứ
+
+# Nguồn
+- Sprites background, địch, nhà, tháp, cầu: https://pixelfrog-assets.itch.io/tiny-swords
